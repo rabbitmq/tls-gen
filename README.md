@@ -1,11 +1,18 @@
-## Development TLS Certificates
+## TLS/SSL Certificate Generator
 
-These certificates are supposed to be used by the test suite,
-are self-signed and imported to `keytool` using a script under `./bin`.
+These certificates are self-signed and supposed to be used for development.
 
-They are generated using the [rabbitmq-test](http://hg.rabbitmq.com/rabbitmq-test/file/4bb389276318/certs) toolchain.
+The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitmq-test/file/4bb389276318/certs) toolchain.
 
 ## Generation
 
     cd test/resources/tls
     PASSWORD=bunnies make
+
+Generated CA certificate as well as client and server certificate and private keys will be
+under the `result` directory.
+
+
+## License
+
+Mozilla Public License, see `LICENSE`.
