@@ -6,8 +6,9 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 
 ## Generation
 
-    cd test/resources/tls
+    cd /tmp
     PASSWORD=bunnies make
+    ls -lha ./result
 
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
