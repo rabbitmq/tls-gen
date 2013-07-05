@@ -6,7 +6,7 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 
 ## Generation
 
-    cd /tmp
+    cd [path to tls-gen repository]
     PASSWORD=bunnies make
     ls -lha ./result
 
