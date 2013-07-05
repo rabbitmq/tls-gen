@@ -7,7 +7,9 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 ## Generation
 
     cd [path to tls-gen repository]
+    # pass a password using the PASSWORD env variable
     PASSWORD=bunnies make
+    # results will be under the ./result directory
     ls -lha ./result
 
 Generated CA certificate as well as client and server certificate and private keys will be
