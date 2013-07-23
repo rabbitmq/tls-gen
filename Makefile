@@ -1,4 +1,4 @@
-/* -*- mode: BSDmakefile; tab-width: 8; indent-tabs-mode: nil -*- */
+# -*- mode: BSDmakefile; tab-width: 8; indent-tabs-mode: nil -*-
 
 OPENSSL=openssl
 
