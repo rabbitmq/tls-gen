@@ -15,7 +15,7 @@ endif
 .PRECIOUS: %/testca
 .PHONY: %/clean target all p12pass
 
-all: client server copy
+all: client server copy announce
 
 regen: clean all
 
@@ -69,3 +69,6 @@ copy:
 	cp $(DIR)/server/key.pem    result/server_key.pem
 	cp $(DIR)/client/cert.pem   result/client_certificate.pem
 	cp $(DIR)/client/key.pem    result/client_key.pem
+
+announce:
+	$(info Done! Find generated certificates and private keys under ./result!)
