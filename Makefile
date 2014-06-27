@@ -76,6 +76,6 @@ announce:
 	$(info Done! Find generated certificates and private keys under ./result!)
 
 verify-pkcs12:
-	echo "Will verify "
+	echo "Will verify PKCS12 stores..."
 	keytool -v -list -storetype pkcs12 -keystore result/server_key.p12
 	keytool -v -list -storetype pkcs12 -keystore result/client_key.p12
