@@ -33,10 +33,10 @@ target: $(DIR)/testca
 	mkdir $(DIR)/$(TARGET)
 	{ ( cd $(DIR)/$(TARGET) && \
 	    openssl genrsa -out key.pem 2048 &&\
-	    openssl req -new -key key.pem -out req.pem -outform PEM\
+	    openssl req -new -key key.pem -out req.pem -days 3650 -outform PEM\
 		-subj /CN=$$(hostname)/O=$(TARGET)/L=$$$$/ -nodes &&\
 	    cd ../testca && \
-	    openssl ca -config openssl.cnf -in ../$(TARGET)/req.pem -out \
+	    openssl ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
 	      ../$(TARGET)/cert.pem -notext -batch -extensions \
 	      $(EXTENSIONS) && \
 	    cd ../$(TARGET) && \
@@ -51,7 +51,7 @@ $(DIR)/testca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    openssl req -x509 -config openssl.cnf -newkey rsa:2048 \
+	    openssl req -x509 -days 3650 -config openssl.cnf -newkey rsa:2048 \
 	      -out cacert.pem -outform PEM -subj /CN=MyTestCA/L=$$$$/ -nodes && \
 	    openssl x509 -in cacert.pem -out cacert.cer -outform DER ) \
 	  || (rm -rf $@ && false); }
