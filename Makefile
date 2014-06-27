@@ -64,11 +64,13 @@ clean:
 
 copy:
 	mkdir -p result
-	cp $(DIR)/testca/cacert.pem result/ca_certificate.pem
-	cp $(DIR)/server/cert.pem   result/server_certificate.pem
-	cp $(DIR)/server/key.pem    result/server_key.pem
-	cp $(DIR)/client/cert.pem   result/client_certificate.pem
-	cp $(DIR)/client/key.pem    result/client_key.pem
+	cp $(DIR)/testca/cacert.pem  result/ca_certificate.pem
+	cp $(DIR)/server/cert.pem    result/server_certificate.pem
+	cp $(DIR)/server/key.pem     result/server_key.pem
+	cp $(DIR)/server/keycert.p12 result/server_key.p12
+	cp $(DIR)/client/cert.pem    result/client_certificate.pem
+	cp $(DIR)/client/key.pem     result/client_key.pem
+	cp $(DIR)/client/keycert.p12 result/client_key.p12
 
 announce:
 	$(info Done! Find generated certificates and private keys under ./result!)
