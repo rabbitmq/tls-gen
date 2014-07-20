@@ -69,7 +69,8 @@ clean:
 
 copy:
 	mkdir -p result
-	cp $(DIR)/testca/cacert.pem  result/ca_certificate.pem
+	cp $(DIR)/testca/cacert.pem        result/ca_certificate.pem
+	cp $(DIR)/testca/private/cakey.pem result/ca_key.pem
 	cp $(DIR)/server/cert.pem    result/server_certificate.pem
 	cp $(DIR)/server/key.pem     result/server_key.pem
 	cp $(DIR)/server/keycert.p12 result/server_key.p12
