@@ -6,6 +6,10 @@ ifndef DIR
 DIR := .
 endif
 
+ifndef CN
+CN := $(shell hostname)
+endif
+
 ifdef PASSWORD
 P12PASS := true
 else
@@ -20,11 +24,12 @@ all: client server copy announce
 regen: clean all
 
 client: p12pass
-	echo $(DIR)
-	$(MAKE) target DIR=$(DIR) TARGET=client EXTENSIONS=client_ca_extensions
+	@echo Using $(CN) as CN value.
+	$(MAKE) target DIR=$(DIR) TARGET=client EXTENSIONS=client_ca_extensions CN=$(CN)
 
 server: p12pass
-	$(MAKE) target DIR=$(DIR) TARGET=server EXTENSIONS=server_ca_extensions
+	@echo Using $(CN) as CN value.
+	$(MAKE) target DIR=$(DIR) TARGET=server EXTENSIONS=server_ca_extensions CN=$(CN)
 
 p12pass:
 	$(P12PASS)
@@ -34,7 +39,7 @@ target: $(DIR)/testca
 	{ ( cd $(DIR)/$(TARGET) && \
 	    openssl genrsa -out key.pem 2048 &&\
 	    openssl req -new -key key.pem -out req.pem -days 3650 -outform PEM\
-		-subj /CN=$$(hostname)/O=$(TARGET)/L=$$$$/ -nodes &&\
+		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes &&\
 	    cd ../testca && \
 	    openssl ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
 	      ../$(TARGET)/cert.pem -notext -batch -extensions \
