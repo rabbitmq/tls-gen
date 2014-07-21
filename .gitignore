@@ -5,3 +5,7 @@ result/*
 *.cer
 *.pem
 *.old
+*.p12
+index.*
+serial
+basic/testca/openssl.cnf
