@@ -15,6 +15,20 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
 
+## Verification
+
+You can verify the generated client and server certificates against the generated CA one with
+
+    make verify
+
+## Overriding CN (Common Name)
+
+By default, certificate's CN ([Common Name](http://tldp.org/HOWTO/Apache-WebDAV-LDAP-HOWTO/glossary.html)) is calculated using `hostname`.
+
+It is possible to override CN with an environment variable:
+
+    CN=secure.mydomain.local PASSWORD=bunnies make
+
 
 ## License
 
