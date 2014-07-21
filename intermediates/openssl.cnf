@@ -37,11 +37,13 @@ distinguished_name = ca_distinguished_name
 x509_extensions = ca_extensions
 
 [ ca_distinguished_name ]
-commonName = hostname
+commonName = Common Name
 
 [ ca_extensions ]
 basicConstraints = CA:true
 keyUsage = keyCertSign, cRLSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
 
 [ client_extensions ]
 basicConstraints = CA:false
