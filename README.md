@@ -7,12 +7,13 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 
 ## Usage
 
-### Generation
+### Generation (root CA)
 
-To generate a CA, client and server private key/certificate pairs, run `make` with
-`PASSWORD` environment variable providing the passphrase:
+To generate a CA, client and server private key/certificate pairs, run
+`make` from the `basic` directory with `PASSWORD` environment variable
+providing the passphrase:
 
-    cd [path to tls-gen repository]
+    cd [path to tls-gen repository]/basic
     # pass a password using the PASSWORD env variable
     PASSWORD=bunnies make
     # results will be under the ./result directory
@@ -27,13 +28,17 @@ You can verify the generated client and server certificates against the generate
 
     make verify
 
-## Overriding CN (Common Name)
+### Overriding CN (Common Name)
 
 By default, certificate's CN ([Common Name](http://tldp.org/HOWTO/Apache-WebDAV-LDAP-HOWTO/glossary.html)) is calculated using `hostname`.
 
 It is possible to override CN with an environment variable:
 
     CN=secure.mydomain.local PASSWORD=bunnies make
+
+### Generation (root and intermediate CAs)
+
+TBD
 
 
 ## License
