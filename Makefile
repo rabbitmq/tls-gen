@@ -25,11 +25,11 @@ regen: clean all
 
 client: p12pass
 	@echo Using $(CN) as CN value.
-	$(MAKE) target DIR=$(DIR) TARGET=client EXTENSIONS=client_ca_extensions CN=$(CN)
+	$(MAKE) target DIR=$(DIR) TARGET=client EXTENSIONS=client_extensions CN=$(CN)
 
 server: p12pass
 	@echo Using $(CN) as CN value.
-	$(MAKE) target DIR=$(DIR) TARGET=server EXTENSIONS=server_ca_extensions CN=$(CN)
+	$(MAKE) target DIR=$(DIR) TARGET=server EXTENSIONS=server_extensions CN=$(CN)
 
 p12pass:
 	$(P12PASS)
