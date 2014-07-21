@@ -72,10 +72,15 @@ root_ca:
 intermediate_ca1:
 	@echo "Will generate intermediate CA 1"
 	$(MAKE) intermediate_ca N=1 PARENT_KEY=$(DIR)/root_ca/private/root_ca_key.pem PARENT_CERT=$(DIR)/root_ca/certs/root_ca_certificate.pem DIR=$(DIR) CN=$(CN)
+	$(OPENSSL) verify -CAfile $(DIR)/root_ca/certs/root_ca_certificate.pem \
+	           $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem
 
 intermediate_ca2:
 	@echo "Will generate intermediate CA 2"
 	$(MAKE) intermediate_ca N=2 PARENT_KEY=$(DIR)/intermediate_ca1/private/intermediate_ca_key.pem PARENT_CERT=$(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem DIR=$(DIR) CN=$(CN)
+	$(OPENSSL) verify -CAfile $(DIR)/root_ca/certs/root_ca_certificate.pem \
+			  -CAfile $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem \
+	           $(DIR)/intermediate_ca2/certs/intermediate_ca_certificate.pem
 
 intermediate_ca:
 	mkdir $(DIR)/intermediate_ca$(N)
@@ -95,9 +100,7 @@ intermediate_ca:
 		           -cert    $(PARENT_CERT) \
 		           -in      $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_csr.pem \
 		           -out     $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem \
-		           -notext -md sha1 -batch -extensions ca_extensions && \
-	    $(OPENSSL) verify -CAfile $(PARENT_CERT) \
-                       $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem ) || (rm -rf $@ &&  false); }
+		           -notext -md sha1 -batch -extensions ca_extensions ) || (rm -rf $@ &&  false); }
 
 clean:
 	rm -rf $(DIR)/root_ca
