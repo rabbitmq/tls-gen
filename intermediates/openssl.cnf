@@ -37,7 +37,7 @@ distinguished_name = ca_distinguished_name
 x509_extensions = ca_extensions
 
 [ ca_distinguished_name ]
-commonName = Common Name
+commonName = Common Name (e.g. hostname)
 
 [ ca_extensions ]
 basicConstraints = CA:true
