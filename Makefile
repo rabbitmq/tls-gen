@@ -67,14 +67,18 @@ clean:
 	rm -rf $(DIR)/client
 	rm -rf $(DIR)/result
 
+CA_CERT_LOCATION     = result/ca_certificate.pem
+CLIENT_CERT_LOCATION = result/client_certificate.pem
+SERVER_CERT_LOCATION = result/server_certificate.pem
+
 copy:
 	mkdir -p result
-	cp $(DIR)/testca/cacert.pem        result/ca_certificate.pem
+	cp $(DIR)/testca/cacert.pem        $(CA_CERT_LOCATION)
 	cp $(DIR)/testca/private/cakey.pem result/ca_key.pem
-	cp $(DIR)/server/cert.pem    result/server_certificate.pem
+	cp $(DIR)/server/cert.pem    $(SERVER_CERT_LOCATION)
 	cp $(DIR)/server/key.pem     result/server_key.pem
 	cp $(DIR)/server/keycert.p12 result/server_key.p12
-	cp $(DIR)/client/cert.pem    result/client_certificate.pem
+	cp $(DIR)/client/cert.pem    $(CLIENT_CERT_LOCATION)
 	cp $(DIR)/client/key.pem     result/client_key.pem
 	cp $(DIR)/client/keycert.p12 result/client_key.p12
 
@@ -83,8 +87,8 @@ announce:
 
 verify:
 	@echo "Will verify generated certificates against the CA..."
-	openssl verify -CAfile result/ca_certificate.pem result/server_certificate.pem
-	openssl verify -CAfile result/ca_certificate.pem result/client_certificate.pem
+	openssl verify -CAfile $(CA_CERT_LOCATION) $(SERVER_CERT_LOCATION)
+	openssl verify -CAfile $(CA_CERT_LOCATION) $(CLIENT_CERT_LOCATION)
 
 verify-pkcs12:
 	@echo "Will verify PKCS12 stores..."
