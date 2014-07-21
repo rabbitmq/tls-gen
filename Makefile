@@ -57,7 +57,7 @@ $(DIR)/testca:
 	    echo 01 > serial && \
 	    touch index.txt && \
 	    openssl req -x509 -days 3650 -config openssl.cnf -newkey rsa:2048 \
-	      -out cacert.pem -outform PEM -subj /CN=MyTestCA/L=$$$$/ -nodes && \
+	      -out cacert.pem -outform PEM -subj /CN=MyTestRootCA/L=$$$$/ -nodes && \
 	    openssl x509 -in cacert.pem -out cacert.cer -outform DER ) \
 	  || (rm -rf $@ && false); }
 
