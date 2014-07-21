@@ -4,7 +4,13 @@ These certificates are self-signed and supposed to be used for development.
 
 The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitmq-test/file/4bb389276318/certs) toolchain.
 
-## Generation
+
+## Usage
+
+### Generation
+
+To generate a CA, client and server private key/certificate pairs, run `make` with
+`PASSWORD` environment variable providing the passphrase:
 
     cd [path to tls-gen repository]
     # pass a password using the PASSWORD env variable
@@ -15,7 +21,7 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
 
-## Verification
+### Verification
 
 You can verify the generated client and server certificates against the generated CA one with
 
