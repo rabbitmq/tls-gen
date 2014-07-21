@@ -81,7 +81,12 @@ copy:
 announce:
 	$(info Done! Find generated certificates and private keys under ./result!)
 
+verify:
+	@echo "Will verify generated certificates against the CA..."
+	openssl verify -CAfile result/ca_certificate.pem result/server_certificate.pem
+	openssl verify -CAfile result/ca_certificate.pem result/client_certificate.pem
+
 verify-pkcs12:
-	echo "Will verify PKCS12 stores..."
+	@echo "Will verify PKCS12 stores..."
 	keytool -v -list -storetype pkcs12 -keystore result/server_key.p12
 	keytool -v -list -storetype pkcs12 -keystore result/client_key.p12
