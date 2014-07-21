@@ -37,15 +37,15 @@ p12pass:
 target: $(DIR)/testca
 	mkdir $(DIR)/$(TARGET)
 	{ ( cd $(DIR)/$(TARGET) && \
-	    openssl genrsa -out key.pem 2048 &&\
-	    openssl req -new -key key.pem -out req.pem -days 3650 -outform PEM\
+	    $(OPENSSL) genrsa -out key.pem 2048 &&\
+	    $(OPENSSL) req -new -key key.pem -out req.pem -days 3650 -outform PEM\
 		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes &&\
 	    cd ../testca && \
-	    openssl ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
+	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
 	      ../$(TARGET)/cert.pem -notext -batch -extensions \
 	      $(EXTENSIONS) && \
 	    cd ../$(TARGET) && \
-	    openssl pkcs12 -export -out keycert.p12 -in cert.pem -inkey key.pem \
+	    $(OPENSSL) pkcs12 -export -out keycert.p12 -in cert.pem -inkey key.pem \
 	      -passout pass:$(PASSWORD) ) || (rm -rf $(DIR)/$(TARGET) && false); }
 
 $(DIR)/testca:
@@ -56,9 +56,9 @@ $(DIR)/testca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    openssl req -x509 -days 3650 -config openssl.cnf -newkey rsa:2048 \
+	    $(OPENSSL) req -x509 -days 3650 -config openssl.cnf -newkey rsa:2048 \
 	      -out cacert.pem -outform PEM -subj /CN=MyTestRootCA/L=$$$$/ -nodes && \
-	    openssl x509 -in cacert.pem -out cacert.cer -outform DER ) \
+	    $(OPENSSL) x509 -in cacert.pem -out cacert.cer -outform DER ) \
 	  || (rm -rf $@ && false); }
 
 clean:
@@ -87,8 +87,8 @@ announce:
 
 verify:
 	@echo "Will verify generated certificates against the CA..."
-	openssl verify -CAfile $(CA_CERT_LOCATION) $(SERVER_CERT_LOCATION)
-	openssl verify -CAfile $(CA_CERT_LOCATION) $(CLIENT_CERT_LOCATION)
+	$(OPENSSL) verify -CAfile $(CA_CERT_LOCATION) $(SERVER_CERT_LOCATION)
+	$(OPENSSL) verify -CAfile $(CA_CERT_LOCATION) $(CLIENT_CERT_LOCATION)
 
 verify-pkcs12:
 	@echo "Will verify PKCS12 stores..."
