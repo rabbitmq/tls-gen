@@ -23,7 +23,7 @@ all: cas client server copy announce
 
 regen: clean all
 
-cas: ensure_passphrase root_ca intermediate_ca1 intermediate_ca2
+cas: ensure_passphrase root_ca intermediate_ca1 intermediate_ca2 concat
 
 client: ensure_passphrase
 	@echo Using $(CN) as CN value.
@@ -39,17 +39,17 @@ ensure_passphrase:
 ROOT_CA_KEY  = $(DIR)/root_ca/private/root_ca_key.pem
 ROOT_CA_CERT = $(DIR)/root_ca/certs/root_ca_certificate.pem
 
-target: root_ca
-	intermediate_ca1
-	intermediate_ca2
+target: cas
 	mkdir $(DIR)/$(TARGET)
 	{ ( cd $(DIR)/$(TARGET) && \
 	    $(OPENSSL) genrsa -out key.pem 2048 &&\
 	    $(OPENSSL) req -new -key key.pem -out req.pem -days 3650 -outform PEM\
-		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes &&\
-	    cd ../root_ca && \
-	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
-	      ../$(TARGET)/cert.pem -notext -batch -extensions $(EXTENSIONS) && \
+		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes && \
+	    cd ../intermediate_ca2 && \
+	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem \
+	        -out ../$(TARGET)/cert.pem \
+		-key $(INTERMEDIATE_CA2_KEY) -cert $(INTERMEDIATE_CA2_CERT) \
+	        -notext -batch -extensions $(EXTENSIONS) && \
 	    cd ../$(TARGET) && \
 	    $(OPENSSL) pkcs12 -export -out keycert.p12 -in cert.pem -inkey key.pem \
 	      -passout pass:$(PASSWORD) ) || (rm -rf $(DIR)/$(TARGET) && false); }
@@ -71,13 +71,14 @@ root_ca:
                         -out certs/root_ca_certificate.cer \
 			-outform DER -extensions ca_extensions ) || (rm -rf $@ && false); }
 
-INTERMEDIATE_CA1_KEY  = $(DIR)/intermediate_ca1/private/intermediate_ca_key.pem
-INTERMEDIATE_CA1_CERT = $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem
+INTERMEDIATE_CA1_KEY  = $(DIR)/intermediate_ca1/private/cakey.pem
+INTERMEDIATE_CA1_CERT = $(DIR)/intermediate_ca1/certs/cacert.pem
 
-INTERMEDIATE_CA2_KEY  = $(DIR)/intermediate_ca2/private/intermediate_ca_key.pem
-INTERMEDIATE_CA2_CERT = $(DIR)/intermediate_ca2/certs/intermediate_ca_certificate.pem
+INTERMEDIATE_CA2_KEY  = $(DIR)/intermediate_ca2/private/cakey.pem
+INTERMEDIATE_CA2_CERT = $(DIR)/intermediate_ca2/certs/cacert.pem
 
-ROOT_INTERMEDIATE1_CHAINED_CERT = $(DIR)/intermediate_ca2/certs/chained_certificate.pem
+ROOT_INTERMEDIATE1_CHAINED_CERT = $(DIR)/intermediate_ca2/certs/i1_r_chained_certificate.pem
+FULLY_CHAINED_CERT              = $(DIR)/intermediate_ca2/certs/i2_i1_r_chained_certificate.pem
 
 intermediate_ca1:
 	@echo "Will generate intermediate CA 1"
@@ -102,18 +103,21 @@ intermediate_ca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    $(OPENSSL) genrsa -out $(DIR)/intermediate_ca$(N)/private/intermediate_ca_key.pem 2048 && \
+	    $(OPENSSL) genrsa -out $(DIR)/intermediate_ca$(N)/private/cakey.pem 2048 && \
 	    $(OPENSSL) req -config openssl.cnf -new \
-	            -key $(DIR)/intermediate_ca$(N)/private/intermediate_ca_key.pem \
-	            -out $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_csr.pem \
+	            -key $(DIR)/intermediate_ca$(N)/private/cakey.pem \
+	            -out $(DIR)/intermediate_ca$(N)/certs/ca_csr.pem \
 		    -passin pass:$(PASSWORD) \
 		    -subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ && \
 	   $(OPENSSL) ca -config openssl.cnf -days 3650 \
 		           -keyfile $(PARENT_KEY) \
 		           -cert    $(PARENT_CERT) \
-		           -in      $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_csr.pem \
-		           -out     $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem \
+		           -in      $(DIR)/intermediate_ca$(N)/certs/ca_csr.pem \
+		           -out     $(DIR)/intermediate_ca$(N)/certs/cacert.pem \
 		           -notext -md sha1 -batch -extensions ca_extensions ) || (rm -rf $@ &&  false); }
+
+concat: 
+	cat $(INTERMEDIATE_CA2_CERT) $(INTERMEDIATE_CA1_CERT) $(ROOT_CA_CERT) > $(FULLY_CHAINED_CERT)
 
 clean:
 	rm -rf $(DIR)/root_ca
@@ -124,21 +128,29 @@ clean:
 	rm -rf $(DIR)/result
 
 ROOT_CA_CERT_LOCATION = result/root_ca_certificate.pem
+ROOT_CA_KEY_LOCATION  = result/root_ca_key.pem
 INT1_CA_CERT_LOCATION = result/intermediate_ca1_certificate.pem
 INT1_CA_KEY_LOCATION  = result/intermediate_ca1_key.pem
 INT2_CA_CERT_LOCATION = result/intermediate_ca2_certificate.pem
 INT2_CA_KEY_LOCATION  = result/intermediate_ca2_key.pem
+
+CHAINED_CA_CERTIFICATE_LOCATION = result/chained_ca_certificate.pem
 
 CLIENT_CERT_LOCATION  = result/client_certificate.pem
 SERVER_CERT_LOCATION  = result/server_certificate.pem
 
 copy:
 	mkdir -p result
-	cp $(DIR)/root_ca/cacert.pem        $(CA_CERT_LOCATION)
-	cp $(DIR)/root_ca/private/cakey.pem result/root_ca_key.pem
+	cp $(ROOT_CA_CERT) $(ROOT_CA_CERT_LOCATION)
+	cp $(ROOT_CA_KEY)  $(ROOT_CA_KEY_LOCATION)
 
-	cp $(DIR)/intermediate1_ca/cacert.pem        $(CA_CERT_LOCATION)
-	cp $(DIR)/intermediate1_ca/private/cakey.pem result/root_ca_key.pem
+	cp $(INTERMEDIATE_CA1_CERT) $(INT1_CA_CERT_LOCATION)
+	cp $(INTERMEDIATE_CA1_KEY)  $(INT1_CA_KEY_LOCATION)
+
+	cp $(INTERMEDIATE_CA2_CERT) $(INT2_CA_CERT_LOCATION)
+	cp $(INTERMEDIATE_CA2_KEY)  $(INT2_CA_KEY_LOCATION)
+
+	cp $(FULLY_CHAINED_CERT)    $(CHAINED_CA_CERTIFICATE_LOCATION)
 
 	cp $(DIR)/server/cert.pem    $(SERVER_CERT_LOCATION)
 	cp $(DIR)/server/key.pem     result/server_key.pem
@@ -152,8 +164,8 @@ announce:
 
 verify:
 	@echo "Will verify generated certificates against the CA..."
-	$(OPENSSL) verify -CAfile $(CA_CERT_LOCATION) $(SERVER_CERT_LOCATION)
-	$(OPENSSL) verify -CAfile $(CA_CERT_LOCATION) $(CLIENT_CERT_LOCATION)
+	$(OPENSSL) verify -CAfile $(CHAINED_CA_CERTIFICATE_LOCATION) $(SERVER_CERT_LOCATION)
+	$(OPENSSL) verify -CAfile $(CHAINED_CA_CERTIFICATE_LOCATION) $(CLIENT_CERT_LOCATION)
 
 verify-pkcs12:
 	@echo "Will verify PKCS12 stores..."

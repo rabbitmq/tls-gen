@@ -3,7 +3,7 @@ default_ca = test_ca
 
 [ test_ca ]
 dir = .
-certificate = $dir/cacert.pem
+certificate = $dir/certs/cacert.pem
 database = $dir/index.txt
 new_certs_dir = $dir/certs
 private_key = $dir/private/cakey.pem
