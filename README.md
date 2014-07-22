@@ -38,7 +38,12 @@ It is possible to override CN with an environment variable:
 
 ### Generation (root and intermediate CAs)
 
-TBD
+To generate a root CA, 2 intermediate CAs, client and server key/certificate pairs, run `make` from
+the `intermediates` directory the same way:
+
+    PASSWORD=bunnies make
+    # results will be under the ./result directory
+    ls -lha ./result
 
 
 ## License
