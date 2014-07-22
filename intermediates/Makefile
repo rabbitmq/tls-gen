@@ -46,8 +46,7 @@ target: root_ca
 		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes &&\
 	    cd ../root_ca && \
 	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
-	      ../$(TARGET)/cert.pem -notext -batch -extensions \
-	      $(EXTENSIONS) && \
+	      ../$(TARGET)/cert.pem -notext -batch -extensions $(EXTENSIONS) && \
 	    cd ../$(TARGET) && \
 	    $(OPENSSL) pkcs12 -export -out keycert.p12 -in cert.pem -inkey key.pem \
 	      -passout pass:$(PASSWORD) ) || (rm -rf $(DIR)/$(TARGET) && false); }
@@ -67,19 +66,19 @@ root_ca:
 	    $(OPENSSL) x509 -days 3650 \
 			-in certs/root_ca_certificate.pem \
                         -out certs/root_ca_certificate.cer \
-			-outform DER ) || (rm -rf $@ && false); }
+			-outform DER -extensions ca_extensions ) || (rm -rf $@ && false); }
 
 intermediate_ca1:
 	@echo "Will generate intermediate CA 1"
-	$(MAKE) intermediate_ca N=1 PARENT_KEY=$(DIR)/root_ca/private/root_ca_key.pem PARENT_CERT=$(DIR)/root_ca/certs/root_ca_certificate.pem DIR=$(DIR) CN=$(CN)
+	$(MAKE) intermediate_ca N=1 PARENT_KEY=$(DIR)/root_ca/private/root_ca_key.pem PARENT_CERT=$(DIR)/root_ca/certs/root_ca_certificate.pem DIR=$(DIR) CN=MyIntermediateCA1
 	$(OPENSSL) verify -CAfile $(DIR)/root_ca/certs/root_ca_certificate.pem \
 	           $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem
 
 intermediate_ca2:
 	@echo "Will generate intermediate CA 2"
-	$(MAKE) intermediate_ca N=2 PARENT_KEY=$(DIR)/intermediate_ca1/private/intermediate_ca_key.pem PARENT_CERT=$(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem DIR=$(DIR) CN=$(CN)
-	$(OPENSSL) verify -CAfile $(DIR)/root_ca/certs/root_ca_certificate.pem \
-			  -CAfile $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem \
+	$(MAKE) intermediate_ca N=2 PARENT_KEY=$(DIR)/intermediate_ca1/private/intermediate_ca_key.pem PARENT_CERT=$(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem DIR=$(DIR) CN=MyIntermediateCA2
+	cat $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem $(DIR)/root_ca/certs/root_ca_certificate.pem > $(DIR)/intermediate_ca2/certs/chained_certificate.pem
+	$(OPENSSL) verify -CAfile $(DIR)/intermediate_ca2/certs/chained_certificate.pem \
 	           $(DIR)/intermediate_ca2/certs/intermediate_ca_certificate.pem
 
 intermediate_ca:
@@ -94,7 +93,8 @@ intermediate_ca:
 	    $(OPENSSL) req -config openssl.cnf -new \
 	            -key $(DIR)/intermediate_ca$(N)/private/intermediate_ca_key.pem \
 	            -out $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_csr.pem \
-		    -passin pass:$(PASSWORD) && \
+		    -passin pass:$(PASSWORD) \
+		    -subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ && \
 	   $(OPENSSL) ca -config openssl.cnf -days 3650 \
 		           -keyfile $(PARENT_KEY) \
 		           -cert    $(PARENT_CERT) \
