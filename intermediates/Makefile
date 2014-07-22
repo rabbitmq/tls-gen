@@ -36,6 +36,9 @@ server: ensure_passphrase
 ensure_passphrase:
 	$(ENSURE_PASSPHRASE)
 
+ROOT_CA_KEY  = $(DIR)/root_ca/private/root_ca_key.pem
+ROOT_CA_CERT = $(DIR)/root_ca/certs/root_ca_certificate.pem
+
 target: root_ca
 	intermediate_ca1
 	intermediate_ca2
@@ -59,27 +62,37 @@ root_ca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    $(OPENSSL) genrsa -out private/root_ca_key.pem 2048 && \
+	    $(OPENSSL) genrsa -out $(ROOT_CA_KEY) 2048 && \
 	    $(OPENSSL) req -x509 -config openssl.cnf -new \
-		-key private/root_ca_key.pem \
-		-out certs/root_ca_certificate.pem -subj /CN=MyTestRootCA/ && \
+		-key $(ROOT_CA_KEY) \
+		-out $(ROOT_CA_CERT) -subj /CN=MyTestRootCA/ && \
 	    $(OPENSSL) x509 -days 3650 \
-			-in certs/root_ca_certificate.pem \
+			-in $(ROOT_CA_CERT) \
                         -out certs/root_ca_certificate.cer \
 			-outform DER -extensions ca_extensions ) || (rm -rf $@ && false); }
 
+INTERMEDIATE_CA1_KEY  = $(DIR)/intermediate_ca1/private/intermediate_ca_key.pem
+INTERMEDIATE_CA1_CERT = $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem
+
+INTERMEDIATE_CA2_KEY  = $(DIR)/intermediate_ca2/private/intermediate_ca_key.pem
+INTERMEDIATE_CA2_CERT = $(DIR)/intermediate_ca2/certs/intermediate_ca_certificate.pem
+
+ROOT_INTERMEDIATE1_CHAINED_CERT = $(DIR)/intermediate_ca2/certs/chained_certificate.pem
+
 intermediate_ca1:
 	@echo "Will generate intermediate CA 1"
-	$(MAKE) intermediate_ca N=1 PARENT_KEY=$(DIR)/root_ca/private/root_ca_key.pem PARENT_CERT=$(DIR)/root_ca/certs/root_ca_certificate.pem DIR=$(DIR) CN=MyIntermediateCA1
-	$(OPENSSL) verify -CAfile $(DIR)/root_ca/certs/root_ca_certificate.pem \
-	           $(DIR)/intermediate_ca$(N)/certs/intermediate_ca_certificate.pem
+	$(MAKE) intermediate_ca N=1 PARENT_KEY=$(ROOT_CA_KEY) PARENT_CERT=$(ROOT_CA_CERT) DIR=$(DIR) CN=MyIntermediateCA1
+	@echo "\n\nWill verify intermediate CA 1"
+	$(OPENSSL) verify -CAfile $(ROOT_CA_CERT) $(INTERMEDIATE_CA1_CERT)
+	@echo "\n\n----------------------------------------------------------------------------------------------\n\n"
 
 intermediate_ca2:
 	@echo "Will generate intermediate CA 2"
-	$(MAKE) intermediate_ca N=2 PARENT_KEY=$(DIR)/intermediate_ca1/private/intermediate_ca_key.pem PARENT_CERT=$(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem DIR=$(DIR) CN=MyIntermediateCA2
-	cat $(DIR)/intermediate_ca1/certs/intermediate_ca_certificate.pem $(DIR)/root_ca/certs/root_ca_certificate.pem > $(DIR)/intermediate_ca2/certs/chained_certificate.pem
-	$(OPENSSL) verify -CAfile $(DIR)/intermediate_ca2/certs/chained_certificate.pem \
-	           $(DIR)/intermediate_ca2/certs/intermediate_ca_certificate.pem
+	$(MAKE) intermediate_ca N=2 PARENT_KEY=$(INTERMEDIATE_CA1_KEY) PARENT_CERT=$(INTERMEDIATE_CA1_CERT) DIR=$(DIR) CN=MyIntermediateCA2
+	cat $(INTERMEDIATE_CA1_CERT) $(ROOT_CA_CERT) > $(ROOT_INTERMEDIATE1_CHAINED_CERT)
+	@echo "Will verify intermediate CA 2\n\n"
+	$(OPENSSL) verify -CAfile $(ROOT_INTERMEDIATE1_CHAINED_CERT) \
+	           $(INTERMEDIATE_CA2_CERT)
 
 intermediate_ca:
 	mkdir $(DIR)/intermediate_ca$(N)
