@@ -49,7 +49,3 @@ the `intermediates` directory the same way:
 ## License
 
 Mozilla Public License, see `LICENSE`.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ruby-amqp/tls-gen/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
