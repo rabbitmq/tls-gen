@@ -5,9 +5,18 @@ These certificates are self-signed and supposed to be used for development.
 The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitmq-test/file/4bb389276318/certs) toolchain.
 
 
+## What It Does
+
+`tls-gen` generates a self-signed Certificate Authority (CA) certificate
+and 2 pairs of keys: client and server, with a single command.
+It can also generate a chain of CA certificates.
+
+Use these certificates in development and QA environments. They are not intended to be used
+in production.
+
 ## Usage
 
-### Generation (root CA)
+### Generation (Root CA)
 
 To generate a CA, client and server private key/certificate pairs, run
 `make` from the `basic` directory with `PASSWORD` environment variable
@@ -36,7 +45,7 @@ It is possible to override CN with an environment variable:
 
     CN=secure.mydomain.local PASSWORD=bunnies make
 
-### Generation (root and intermediate CAs)
+### Generation with Chained CAs (a.k.a. Root and Intermediate CAs)
 
 To generate a root CA, 2 intermediate CAs, client and server key/certificate pairs, run `make` from
 the `intermediates` directory the same way:
