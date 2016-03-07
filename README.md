@@ -11,7 +11,7 @@ The project is extracted from the [rabbitmq-test](http://hg.rabbitmq.com/rabbitm
 and 2 pairs of keys: client and server, with a single command.
 It can also generate a chain of CA certificates.
 
-Use these certificates in development and QA environments. They are not intended to be used
+Use these certificates in development and QA environments. They are self-signed and not intended to be used
 in production.
 
 ## Usage
