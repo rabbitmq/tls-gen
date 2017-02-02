@@ -16,10 +16,19 @@ in production.
 
 ## Usage
 
-### Generation (Root CA)
+Certificate authorities (CAs) and certificates can form chains. tls-gen provides
+different "profiles", for example:
+
+ * A root CA with leaf certificate/key pairs signed by it
+ * A root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
+
+Each profile has a sub-directory in repository root. All profiles use
+the same `make` targets and directory layouts that are as close as possible.
+
+### Basic Profile
 
 To generate a CA, client and server private key/certificate pairs, run
-`make` from the `basic` directory with `PASSWORD` environment variable
+`make` from the [basic](./basic) profile directory with `PASSWORD` environment variable
 providing the passphrase:
 
     cd [path to tls-gen repository]/basic
@@ -45,10 +54,10 @@ It is possible to override CN with an environment variable:
 
     CN=secure.mydomain.local PASSWORD=bunnies make
 
-### Generation with Chained CAs (a.k.a. Root and Intermediate CAs)
+### Chained Certificates Profile 1
 
 To generate a root CA, 2 intermediate CAs, client and server key/certificate pairs, run `make` from
-the `intermediates` directory the same way:
+the [two_shared_intermediates](./two_shared_intermediates) directory the same way:
 
     PASSWORD=bunnies make
     # results will be under the ./result directory
