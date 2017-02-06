@@ -88,6 +88,7 @@ To display information about generated certificates, use
 
     make info
 
+This assumes the certificates were previously generated.
 
 ## License
 
