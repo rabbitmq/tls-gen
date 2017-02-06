@@ -16,6 +16,14 @@ else
 P12PASS := @echo No PASSWORD defined. && false
 endif
 
+ifndef NUMBER_OF_PRIVATE_KEY_BITS
+NUMBER_OF_PRIVATE_KEY_BITS := 4096
+endif
+
+ifndef DAYS_OF_VALIDITY
+DAYS_OF_VALIDITY := 3650
+endif
+
 .PRECIOUS: %/testca
 .PHONY: %/clean target all p12pass
 
@@ -37,11 +45,11 @@ p12pass:
 target: $(DIR)/testca
 	mkdir $(DIR)/$(TARGET)
 	{ ( cd $(DIR)/$(TARGET) && \
-	    $(OPENSSL) genrsa -out key.pem 2048 &&\
-	    $(OPENSSL) req -new -key key.pem -out req.pem -days 3650 -outform PEM\
+	    $(OPENSSL) genrsa -out key.pem $(NUMBER_OF_PRIVATE_KEY_BITS) &&\
+	    $(OPENSSL) req -new -key key.pem -out req.pem -days $(DAYS_OF_VALIDITY) -outform PEM\
 		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes &&\
 	    cd ../testca && \
-	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem -out \
+	    $(OPENSSL) ca -config openssl.cnf  -days $(DAYS_OF_VALIDITY) -in ../$(TARGET)/req.pem -out \
 	      ../$(TARGET)/cert.pem -notext -batch -extensions \
 	      $(EXTENSIONS) && \
 	    cd ../$(TARGET) && \
@@ -56,7 +64,7 @@ $(DIR)/testca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    $(OPENSSL) req -x509 -days 3650 -config openssl.cnf -newkey rsa:2048 \
+	    $(OPENSSL) req -x509 -days $(DAYS_OF_VALIDITY) -config openssl.cnf -newkey rsa:$(NUMBER_OF_PRIVATE_KEY_BITS) \
 	      -out cacert.pem -outform PEM -subj /CN=MyTestRootCA/L=$$$$/ -nodes && \
 	    $(OPENSSL) x509 -in cacert.pem -out cacert.cer -outform DER ) \
 	  || (rm -rf $@ && false); }

@@ -16,6 +16,14 @@ else
 ENSURE_PASSPHRASE := @echo No PASSWORD defined. && false
 endif
 
+ifndef NUMBER_OF_PRIVATE_KEY_BITS
+NUMBER_OF_PRIVATE_KEY_BITS := 4096
+endif
+
+ifndef DAYS_OF_VALIDITY
+DAYS_OF_VALIDITY := $(DAYS_OF_VALIDITY)
+endif
+
 .PRECIOUS: %/root_ca
 .PHONY: %/clean target all ensure_passphrase
 
@@ -42,11 +50,11 @@ ROOT_CA_CERT = $(DIR)/root_ca/certs/root_ca_certificate.pem
 target: cas
 	mkdir $(DIR)/$(TARGET)
 	{ ( cd $(DIR)/$(TARGET) && \
-	    $(OPENSSL) genrsa -out key.pem 2048 &&\
-	    $(OPENSSL) req -new -key key.pem -out req.pem -days 3650 -outform PEM\
+	    $(OPENSSL) genrsa -out key.pem $(NUMBER_OF_PRIVATE_KEY_BITS) &&\
+	    $(OPENSSL) req -new -key key.pem -out req.pem -days $(DAYS_OF_VALIDITY) -outform PEM\
 		-subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ -nodes && \
 	    cd ../intermediate_ca2 && \
-	    $(OPENSSL) ca -config openssl.cnf  -days 3650 -in ../$(TARGET)/req.pem \
+	    $(OPENSSL) ca -config openssl.cnf  -days $(DAYS_OF_VALIDITY) -in ../$(TARGET)/req.pem \
 	        -out ../$(TARGET)/cert.pem \
 		-key $(INTERMEDIATE_CA2_KEY) -cert $(INTERMEDIATE_CA2_CERT) \
 	        -notext -batch -extensions $(EXTENSIONS) && \
@@ -62,11 +70,11 @@ root_ca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    $(OPENSSL) genrsa -out $(ROOT_CA_KEY) 2048 && \
+	    $(OPENSSL) genrsa -out $(ROOT_CA_KEY) $(NUMBER_OF_PRIVATE_KEY_BITS) && \
 	    $(OPENSSL) req -x509 -config openssl.cnf -new \
 		-key $(ROOT_CA_KEY) \
 		-out $(ROOT_CA_CERT) -subj /CN=MyTestRootCA/ && \
-	    $(OPENSSL) x509 -days 3650 \
+	    $(OPENSSL) x509 -days $(DAYS_OF_VALIDITY) \
 			-in $(ROOT_CA_CERT) \
                         -out certs/root_ca_certificate.cer \
 			-outform DER -extensions ca_extensions ) || (rm -rf $@ && false); }
@@ -103,13 +111,13 @@ intermediate_ca:
 	    chmod 700 private && \
 	    echo 01 > serial && \
 	    touch index.txt && \
-	    $(OPENSSL) genrsa -out $(DIR)/intermediate_ca$(N)/private/cakey.pem 2048 && \
+	    $(OPENSSL) genrsa -out $(DIR)/intermediate_ca$(N)/private/cakey.pem $(NUMBER_OF_PRIVATE_KEY_BITS) && \
 	    $(OPENSSL) req -config openssl.cnf -new \
 	            -key $(DIR)/intermediate_ca$(N)/private/cakey.pem \
 	            -out $(DIR)/intermediate_ca$(N)/certs/ca_csr.pem \
 		    -passin pass:$(PASSWORD) \
 		    -subj /CN=$(CN)/O=$(TARGET)/L=$$$$/ && \
-	   $(OPENSSL) ca -config openssl.cnf -days 3650 \
+	   $(OPENSSL) ca -config openssl.cnf -days $(DAYS_OF_VALIDITY) \
 		           -keyfile $(PARENT_KEY) \
 		           -cert    $(PARENT_CERT) \
 		           -in      $(DIR)/intermediate_ca$(N)/certs/ca_csr.pem \
