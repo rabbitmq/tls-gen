@@ -1,0 +1,3 @@
+root_ca/openssl.cnf
+intermediate_ca1/openssl.cnf
+intermediate_ca2/openssl.cnf
