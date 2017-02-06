@@ -70,6 +70,13 @@ the [two_shared_intermediates](./two_shared_intermediates) directory the same wa
     ls -lha ./result
 
 
+## Certificate Information
+
+To display information about generated certificates, use
+
+    make info
+
+
 ## License
 
 Mozilla Public License, see `LICENSE`.

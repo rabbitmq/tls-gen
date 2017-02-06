@@ -31,6 +31,12 @@ all: client server copy announce
 
 regen: clean all
 
+info:
+	@echo "===> Server certificate details:"
+	openssl x509 -in $(SERVER_CERT_LOCATION) -text -noout
+	@echo "\n\n===> Client certificate details:"
+	openssl x509 -in $(CLIENT_CERT_LOCATION) -text -noout
+
 client: p12pass
 	@echo Using $(CN) as CN value.
 	$(MAKE) target DIR=$(DIR) TARGET=client EXTENSIONS=client_extensions CN=$(CN)

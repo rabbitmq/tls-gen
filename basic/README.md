@@ -27,3 +27,9 @@ To regenerate, use
 You can verify the generated client and server certificates against the generated CA one with
 
     make verify
+
+## Certificate Information
+
+To display client and server certificate information, use
+
+    make info

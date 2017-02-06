@@ -31,6 +31,12 @@ all: cas client server copy announce
 
 regen: clean all
 
+info:
+	@echo "===> Server certificate details:"
+	openssl x509 -in $(SERVER_CERT_LOCATION) -text -noout
+	@echo "\n\n===> Client certificate details:"
+	openssl x509 -in $(CLIENT_CERT_LOCATION) -text -noout
+
 cas: ensure_passphrase root_ca intermediate_ca1 intermediate_ca2 concat
 
 client: ensure_passphrase
