@@ -17,6 +17,12 @@ the 2nd intermediate CA:
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
 
+### Regeneration
+
+To regenerate, use
+
+    make regen PASSWORD=bunnies
+
 ### Verification
 
 You can verify the generated client and server certificates against the generated CA one with

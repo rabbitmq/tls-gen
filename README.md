@@ -32,13 +32,19 @@ To generate a CA, client and server private key/certificate pairs, run
 providing the passphrase:
 
     cd [path to tls-gen repository]/basic
-    # pass a password using the PASSWORD env variable
-    PASSWORD=bunnies make
+    # pass a password using the PASSWORD variable
+    make PASSWORD=bunnies
     # results will be under the ./result directory
     ls -lha ./result
 
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
+
+### Regeneration
+
+To generate a new set of keys and certificates, use
+
+    make regen PASSWORD=bunnies
 
 ### Verification
 
@@ -59,7 +65,7 @@ It is possible to override CN with an environment variable:
 To generate a root CA, 2 intermediate CAs, client and server key/certificate pairs, run `make` from
 the [two_shared_intermediates](./two_shared_intermediates) directory the same way:
 
-    PASSWORD=bunnies make
+    make PASSWORD=bunnies
     # results will be under the ./result directory
     ls -lha ./result
 

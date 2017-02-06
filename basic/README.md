@@ -9,12 +9,18 @@ and two certificate/key pairs signed by it:
 ## Generating
 
     # pass a password using the PASSWORD env variable
-    PASSWORD=bunnies make
+    make PASSWORD=bunnies
     # results will be under the ./result directory
     ls -lha ./result
 
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
+
+### Regeneration
+
+To regenerate, use
+
+    make regen PASSWORD=bunnies
 
 ### Verification
 
