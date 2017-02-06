@@ -4,8 +4,8 @@ This tls-gen variation generates a root CA,
 two intermediary CAs and two certificate/key pairs signed by
 the 2nd intermediate CA:
 
- * Chain 1: root CA => intermediate 1 => intermediate 2 => client certificate/key pair
- * Chain 2: root CA => intermediate 1 => intermediate 2 => server certificate/key pair
+ * Chain 1: root CA => client intermediate => client certificate/key pair
+ * Chain 2: root CA => server intermediate => server certificate/key pair
 
 ## Generating
 

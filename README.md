@@ -19,13 +19,14 @@ in production.
 Certificate authorities (CAs) and certificates can form chains. tls-gen provides
 different "profiles", for example:
 
- 1. A root CA with leaf certificate/key pairs signed by it
- 2. A root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
+ * [Profile 1](./basic/): a root CA with leaf certificate/key pairs signed by it
+ * [Profile 2](./two_shared_intermediates/): a root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
+ * [Profile 3](./separate_intermediates/): a root CA with two intermediary certificates (one for server, one for client) and leaf pairs signed by the intermediaries
 
 Each profile has a sub-directory in repository root. All profiles use
 the same `make` targets and directory layouts that are as close as possible.
 
-### Basic Profile
+### Profile 1 (Basic Profile)
 
 To generate a CA, client and server private key/certificate pairs, run
 `make` from the [basic](./basic) profile directory with `PASSWORD` environment variable
@@ -39,6 +40,26 @@ providing the passphrase:
 
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
+
+
+### Profile 2 (Shared Chained Certificates)
+
+To generate a root CA, 2 shared intermediate CAs, client and server key/certificate pairs, run `make` from
+the [two_shared_intermediates](./two_shared_intermediates) directory:
+
+    make PASSWORD=bunnies
+    # results will be under the ./result directory
+    ls -lha ./result
+
+### Profile 3 (Separate Certificate Chains)
+
+To generate a root CA, 2 intermediate CAs (one for server, one for client), client and server key/certificate pairs, run `make` from
+the [separate_intermediates](./separate_intermediates) directory:
+
+    make PASSWORD=bunnies
+    # results will be under the ./result directory
+    ls -lha ./result
+
 
 ### Regeneration
 
@@ -58,19 +79,10 @@ By default, certificate's CN ([Common Name](http://tldp.org/HOWTO/Apache-WebDAV-
 
 It is possible to override CN with an environment variable:
 
-    CN=secure.mydomain.local PASSWORD=bunnies make
-
-### Chained Certificates Profile 1
-
-To generate a root CA, 2 intermediate CAs, client and server key/certificate pairs, run `make` from
-the [two_shared_intermediates](./two_shared_intermediates) directory the same way:
-
-    make PASSWORD=bunnies
-    # results will be under the ./result directory
-    ls -lha ./result
+    make PASSWORD=bunnies CN=secure.mydomain.local
 
 
-## Certificate Information
+### Certificate Information
 
 To display information about generated certificates, use
 
