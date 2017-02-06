@@ -1,8 +1,8 @@
-# Chained (With Shared Intermediates) Certificates
+# Chained (With Separate Intermediates) Certificates
 
 This tls-gen variation generates a root CA,
-two intermediary CAs and two certificate/key pairs signed by
-the 2nd intermediate CA:
+one intermediary server CA, one intermediary client CA, and two certificate/key pairs signed by
+their respective intermediate CAs:
 
  * Chain 1: root CA => client intermediate => client certificate/key pair
  * Chain 2: root CA => server intermediate => server certificate/key pair

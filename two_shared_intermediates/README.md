@@ -10,7 +10,7 @@ the 2nd intermediate CA:
 ## Generating
 
     # pass a password using the PASSWORD env variable
-    PASSWORD=bunnies make
+    make PASSWORD=bunnies
     # results will be under the ./result directory
     ls -lha ./result
 
