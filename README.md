@@ -19,8 +19,8 @@ in production.
 Certificate authorities (CAs) and certificates can form chains. tls-gen provides
 different "profiles", for example:
 
- * A root CA with leaf certificate/key pairs signed by it
- * A root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
+ 1. A root CA with leaf certificate/key pairs signed by it
+ 2. A root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
 
 Each profile has a sub-directory in repository root. All profiles use
 the same `make` targets and directory layouts that are as close as possible.
