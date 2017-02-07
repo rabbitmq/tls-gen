@@ -128,7 +128,7 @@ intermediate_ca:
 		           -out     $(DIR)/intermediate_$(SUFFIX)_ca/certs/cacert.pem \
 		           -notext -md sha1 -batch -extensions ca_extensions ) || (rm -rf $@ &&  false); }
 
-concat: 
+concat:
 	cat $(SERVER_INTERMEDIATE_CA_CERT) $(ROOT_CA_CERT) > $(SERVER_ROOT_CHAINED_CERT)
 	cat $(CLIENT_INTERMEDIATE_CA_CERT) $(ROOT_CA_CERT) > $(CLIENT_ROOT_CHAINED_CERT)
 
@@ -181,6 +181,9 @@ announce:
 
 verify:
 	@echo "Will verify generated certificates against their respective CAs..."
+	$(OPENSSL) verify -CAfile $(ROOT_CA_CERT) $(CHAINED_SERVER_CA_CERTIFICATE_LOCATION)
+	$(OPENSSL) verify -CAfile $(ROOT_CA_CERT) $(CHAINED_CLIENT_CA_CERTIFICATE_LOCATION)
+
 	$(OPENSSL) verify -CAfile $(CHAINED_SERVER_CA_CERTIFICATE_LOCATION) $(SERVER_CERT_LOCATION)
 	$(OPENSSL) verify -CAfile $(CHAINED_CLIENT_CA_CERTIFICATE_LOCATION) $(CLIENT_CERT_LOCATION)
 
