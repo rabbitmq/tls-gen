@@ -14,6 +14,17 @@ It can also generate a chain of CA certificates.
 Use these certificates in development and QA environments. They are self-signed and not intended to be used
 in production.
 
+
+## Prerequisites
+
+`tls-gen` requires
+
+ * `openssl`
+ * Python 3 in `PATH` as `python3` (Python 2.7 is *not* and will not be supported)
+ * `make`
+
+
+
 ## Usage
 
 Certificate authorities (CAs) and certificates can form chains. tls-gen provides
