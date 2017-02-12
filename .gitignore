@@ -9,3 +9,6 @@ result/*
 index.*
 serial
 basic/testca/openssl.cnf
+
+__pycache__
+*.pyc
