@@ -40,6 +40,11 @@ def verify(opts):
     verify.verify_leaf_certificate_against_root_ca("client")
     verify.verify_leaf_certificate_against_root_ca("server")
 
+def verify_pkcs12(opts):
+    print("Will verify generated PKCS12 certificate stores...")
+    verify.verify_pkcs12_store("client")
+    verify.verify_pkcs12_store("server")
+
 def info(opts):
     info.leaf_certificate_info("client")
     info.leaf_certificate_info("server")
@@ -50,6 +55,7 @@ commands = {"generate":   generate,
             "regenerate": regenerate,
             "regen":      regenerate,
             "verify":     verify,
+            "verify-pkcs12": verify_pkcs12,
             "info":       info}
 
 if __name__ == "__main__":
