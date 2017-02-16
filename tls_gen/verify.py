@@ -10,9 +10,10 @@ def verify_leaf_certificate_against_root_ca(peer):
           "-CAfile", root_ca_certificate_path(),
           leaf_certificate_path(peer)])
 
-def verify_pkcs12_store(peer):
+def verify_pkcs12_store(peer, opts):
     print("Will verify {} PKCS12 store".format(peer))
     call(["keytool", "-v", "-list",
           "-storetype", "pkcs12",
-          "-keystore", leaf_pkcs12_key_store_path(peer)])
+          "-keystore", leaf_pkcs12_key_store_path(peer),
+          "-storepass", opts.password])
 

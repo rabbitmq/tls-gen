@@ -41,9 +41,11 @@ def verify(opts):
     verify.verify_leaf_certificate_against_root_ca("server")
 
 def verify_pkcs12(opts):
+    cli.ensure_password_is_provided(opts)
+
     print("Will verify generated PKCS12 certificate stores...")
-    verify.verify_pkcs12_store("client")
-    verify.verify_pkcs12_store("server")
+    verify.verify_pkcs12_store("client", opts)
+    verify.verify_pkcs12_store("server", opts)
 
 def info(opts):
     info.leaf_certificate_info("client")

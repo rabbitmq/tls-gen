@@ -30,7 +30,7 @@ verify:
 	$(PYTHON) profile.py verify
 
 verify-pkcs12:
-	$(PYTHON) profile.py verify-pkcs12
+	$(PYTHON) profile.py verify-pkcs12 --password $(PASSWORD)
 
 help:
 	$(PYTHON) profile.py --help
