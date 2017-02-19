@@ -20,6 +20,12 @@ endif
 
 all: regen verify
 
+clean:
+	$(PYTHON) profile.py clean
+
+gen:
+	$(PYTHON) profile.py generate --password $(PASSWORD) --common-name $(CN) -V $(DAYS_OF_VALIDITY)
+
 regen:
 	$(PYTHON) profile.py regenerate --password $(PASSWORD) --common-name $(CN) -V $(DAYS_OF_VALIDITY)
 

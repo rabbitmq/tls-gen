@@ -7,8 +7,8 @@ from .paths import *
 def verify_leaf_certificate_against_root_ca(peer):
     print("Will verify {} certificate against root CA".format(peer))
     call(["openssl", "verify",
-          "-CAfile", root_ca_certificate_path(),
-          leaf_certificate_path(peer)])
+          "-CAfile", result_root_ca_certificate_path(),
+          result_leaf_certificate_path(peer)])
 
 def verify_pkcs12_store(peer, opts):
     print("Will verify {} PKCS12 store".format(peer))
