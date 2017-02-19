@@ -32,13 +32,16 @@ def generate(opts):
                                  parent_certificate_path = paths.root_ca_certificate_path(),
                                  parent_key_path         = paths.root_ca_key_path(),
                                  suffix = "1")
+    print("Will generate first intermediate CA signed by the root CA")
     gen.generate_intermediate_ca(opts,
                                  parent_certificate_path = paths.intermediate_ca_certificate_path("1"),
                                  parent_key_path         = paths.intermediate_ca_key_path("1"),
                                  suffix = "2")
+    print("Will generate server certificate/key pair signed by the second CA")
     gen.generate_server_certificate_and_key_pair(opts,
                                                  parent_certificate_path = paths.intermediate_ca_certificate_path("2"),
                                                  parent_key_path         = paths.intermediate_ca_key_path("2"))
+    print("Will generate client certificate/key pair signed by the second CA")
     gen.generate_client_certificate_and_key_pair(opts,
                                                  parent_certificate_path = paths.intermediate_ca_certificate_path("2"),
                                                  parent_key_path         = paths.intermediate_ca_key_path("2"))
