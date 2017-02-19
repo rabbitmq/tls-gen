@@ -1,22 +1,23 @@
 [ ca ]
-default_ca = test_ca
+default_ca = test_root_ca
 
-[ test_ca ]
-dir = .
-certificate = $dir/certs/cacert.pem
-database = $dir/index.txt
-new_certs_dir = $dir/certs
-private_key = $dir/private/cakey.pem
-serial = $dir/serial
+[ test_root_ca ]
+root_ca_dir = testca
+
+certificate   = $root_ca_dir/cacert.pem
+database      = $root_ca_dir/index.txt
+new_certs_dir = $root_ca_dir/certs
+private_key   = $root_ca_dir/private/cakey.pem
+serial        = $root_ca_dir/serial
 
 default_crl_days = 7
-default_days = 1825
-default_md = sha1
+default_days     = 1825
+default_md       = sha256
 
-policy = test_ca_policy
+policy          = test_root_ca_policy
 x509_extensions = certificate_extensions
 
-[ test_ca_policy ]
+[ test_root_ca_policy ]
 commonName = supplied
 stateOrProvinceName = optional
 countryName = optional
@@ -29,28 +30,29 @@ domainComponent = optional
 basicConstraints = CA:false
 
 [ req ]
-default_bits = 2048
-default_keyfile = ./private/cakey.pem
-default_md = sha1
-prompt = yes
-distinguished_name = ca_distinguished_name
-x509_extensions = ca_extensions
+default_bits       = 4096
+default_md         = sha256
+prompt             = yes
+distinguished_name = root_ca_distinguished_name
+x509_extensions    = root_ca_extensions
 
-[ ca_distinguished_name ]
-commonName = Common Name (e.g. hostname)
+[ root_ca_distinguished_name ]
+commonName = hostname
+
+[ root_ca_extensions ]
+basicConstraints = CA:true
+keyUsage         = keyCertSign, cRLSign
 
 [ ca_extensions ]
 basicConstraints = CA:true
-keyUsage = keyCertSign, cRLSign
-subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid:always,issuer:always
+keyUsage         = keyCertSign, cRLSign
 
 [ client_extensions ]
 basicConstraints = CA:false
-keyUsage = digitalSignature
+keyUsage         = digitalSignature
 extendedKeyUsage = 1.3.6.1.5.5.7.3.2
 
 [ server_extensions ]
 basicConstraints = CA:false
-keyUsage = keyEncipherment
+keyUsage         = keyEncipherment
 extendedKeyUsage = 1.3.6.1.5.5.7.3.1

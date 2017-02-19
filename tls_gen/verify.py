@@ -10,6 +10,14 @@ def verify_leaf_certificate_against_root_ca(peer):
           "-CAfile", result_root_ca_certificate_path(),
           result_leaf_certificate_path(peer)])
 
+def verify_leaf_certificate_against_ca_chain(peer):
+    print("Will verify {} certificate against CA certificate chain {}".format(
+        peer, result_chained_certificate_path()))
+    call(["openssl", "verify",
+          "-CAfile", result_chained_certificate_path(),
+          result_leaf_certificate_path(peer)])
+    
+
 def verify_pkcs12_store(peer, opts):
     print("Will verify {} PKCS12 store".format(peer))
     call(["keytool", "-v", "-list",

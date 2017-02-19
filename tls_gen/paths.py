@@ -43,10 +43,19 @@ def root_ca_certificate_cer_path():
 #
 
 def intermediate_ca_path(suffix = ""):
-    return path.join(result_path(), "intermediate_ca{}".format(suffix))
+    return path.join(root, "intermediate_ca{}".format(suffix))
+
+def intermediate_ca_certs_path(suffix = ""):
+    return path.join(intermediate_ca_path(suffix), "certs")
 
 def intermediate_ca_certificate_path(suffix = ""):
     return path.join(intermediate_ca_path(suffix), "certs", "cacert.pem")
+
+def intermediate_ca_certificate_csr_path(suffix = ""):
+    return path.join(intermediate_ca_path(suffix), "certs", "ca_csr.pem")
+
+def intermediate_ca_key_path(suffix = ""):
+    return path.join(intermediate_ca_path(suffix), "private", "cakey.pem")
 
 #
 # Leaf (peer) certificates and keys
@@ -80,3 +89,6 @@ def result_leaf_key_path(peer):
 
 def result_leaf_pkcs12_key_store_path(peer):
     return path.join(result_path(), "{}_key.p12".format(peer))
+
+def result_chained_certificate_path():
+    return path.join(root, result_dir_name, "chained_ca_certificate.pem")
