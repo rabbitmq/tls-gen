@@ -43,7 +43,7 @@ def root_ca_certificate_cer_path():
 #
 
 def intermediate_ca_path(suffix = ""):
-    return path.join(root, "intermediate_ca{}".format(suffix))
+    return path.join(root, "intermediate_ca_{}".format(suffix))
 
 def intermediate_ca_certs_path(suffix = ""):
     return path.join(intermediate_ca_path(suffix), "certs")
@@ -92,3 +92,6 @@ def result_leaf_pkcs12_key_store_path(peer):
 
 def result_chained_certificate_path():
     return path.join(root, result_dir_name, "chained_ca_certificate.pem")
+
+def result_chained_peer_ca_certificate_path(peer):
+    return path.join(root, result_dir_name, "chained_{}_ca_certificate.pem".format(peer))
