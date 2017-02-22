@@ -22,8 +22,7 @@ def _concat_ca_certificates_of(peer):
     print("Will concatenate CA certificates of {} into {}".format(peer, paths.result_chained_peer_ca_certificate_path(peer)))
     chain_file = open(paths.result_chained_peer_ca_certificate_path(peer), "w")
     call(["cat",
-          paths.intermediate_ca_certificate_path("server"),
-          paths.intermediate_ca_certificate_path("client"),
+          paths.intermediate_ca_certificate_path(peer),
           paths.root_ca_certificate_path()],
          stdout = chain_file)
     chain_file.close
