@@ -65,7 +65,7 @@ def generate_root_ca(opts):
                 "-keyout",  root_ca_key_path(),
                 "-out",     root_ca_certificate_path(),
                 "-outform", "PEM",
-                "-subj",    "/CN=MyTestRootCA/L=$$$$/",
+                "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/",
                 "-nodes")
     openssl_x509("-in",      root_ca_certificate_path(),
                  "-out",     root_ca_certificate_cer_path(),
