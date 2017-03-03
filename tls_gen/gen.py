@@ -21,19 +21,25 @@ def copy_leaf_certificate_and_key_pair(peer):
 
 def openssl_req(*args):
     print("=>\t[openssl_req]")
-    call(["openssl", "req", *args])
+    # avoids requiring Python 3.5, see
+    # https://www.python.org/dev/peps/pep-0448/
+    xs = ["openssl", "req"] + list(args)
+    call(xs)
 
 def openssl_x509(*args):
     print("=>\t[openssl_x509]")
-    call(["openssl", "x509", *args])
+    xs = ["openssl", "x509"] + list(args)
+    call(xs)
 
 def openssl_genrsa(*args):
     print("=>\t[openssl_genrsa]")
-    call(["openssl", "genrsa", *args])
+    xs = ["openssl", "genrsa"] + list(args)
+    call(xs)
 
 def openssl_ca(*args):
     print("=>\t[openssl_ca]")
-    call(["openssl", "ca", *args])
+    xs = ["openssl", "ca"] + list(args)
+    call(xs)
 
 def prepare_ca_directory(dir_name):
     os.makedirs(relative_path(dir_name), exist_ok = True)
