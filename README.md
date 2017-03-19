@@ -14,6 +14,7 @@ It can also generate a chain of CA certificates.
 Use these certificates in development and QA environments. They are self-signed and not intended to be used
 in production.
 
+Private keys can be generated using RSA as well as [ECC][ecc-intro].
 
 ## Prerequisites
 
@@ -52,6 +53,17 @@ providing the passphrase:
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
 
+It possible to use [ECC][ecc-intro] for leaf keys:
+
+    cd [path to tls-gen repository]/basic
+    # pass a password using the PASSWORD variable
+    make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+    # results will be under the ./result directory
+    ls -lha ./result
+
+The list of available curves can be obtained with
+
+    openssl ecparam -list_curves
 
 ### Profile 2 (Shared Chained Certificates)
 
@@ -62,6 +74,16 @@ the [two_shared_intermediates](./two_shared_intermediates) directory:
     # results will be under the ./result directory
     ls -lha ./result
 
+It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
+
+    make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+    # results will be under the ./result directory
+    ls -lha ./result
+
+The list of available curves can be obtained with
+
+    openssl ecparam -list_curves
+
 ### Profile 3 (Separate Certificate Chains)
 
 To generate a root CA, 2 intermediate CAs (one for server, one for client), client and server key/certificate pairs, run `make` from
@@ -71,12 +93,24 @@ the [separate_intermediates](./separate_intermediates) directory:
     # results will be under the ./result directory
     ls -lha ./result
 
+It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
+
+    make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+    # results will be under the ./result directory
+    ls -lha ./result
+
+The list of available curves can be obtained with
+
+    openssl ecparam -list_curves
+
 
 ### Regeneration
 
 To generate a new set of keys and certificates, use
 
     make regen PASSWORD=bunnies
+
+The `regen` target accepts the same variables as `gen` (default target) above.
 
 ### Verification
 
@@ -104,3 +138,5 @@ This assumes the certificates were previously generated.
 ## License
 
 Mozilla Public License, see `LICENSE`.
+
+[ecc-intro]: https://blog.cloudflare.com/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/

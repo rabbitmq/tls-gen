@@ -14,6 +14,13 @@ def build_parser():
     p.add_option("-b", "--key-bits", dest = "key_bits", action = "store",
                  help = "Number of private key bits",
                  type = "int", default = 4096)
+    p.add_option("-e", "--use-ecc", dest = "use_ecc", action = "store_true",
+                 help = "Should Elliptic Curve Cryptography be used?",
+                 default = False)
+    p.add_option("-c", "--ecc-curve",
+                 type = "string", dest = "ecc_curve", action = "store",
+                 help = "ECC curve to use (see 'openssl ecparam -list_curves')",
+                 default = "prime256v1")
     p.add_option("-V", "--days-of-validity", dest = "validity_days", action = "store",
                  help = "For how many days should generated certificates be valid?",
                  type = "int", default = 3650)

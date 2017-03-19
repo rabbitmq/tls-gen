@@ -36,6 +36,11 @@ def openssl_genrsa(*args):
     xs = ["openssl", "genrsa"] + list(args)
     call(xs)
 
+def openssl_ecparam(*args):
+    print("=>\t[openssl_ecparam]")
+    xs = ["openssl", "ecparam"] + list(args)
+    call(xs)
+
 def openssl_ca(*args):
     print("=>\t[openssl_ca]")
     xs = ["openssl", "ca"] + list(args)
@@ -91,7 +96,13 @@ def generate_intermediate_ca(opts,
     print("Using parent key path at {}".format(parent_key_path))
     prepare_ca_directory(intermediate_ca_path(suffix))
 
-    openssl_genrsa("-out", intermediate_ca_key_path(suffix), str(opts.key_bits))
+    if opts.use_ecc:
+        print("Will use Elliptic Curve Cryptography...")
+        openssl_ecparam("-out", intermediate_ca_key_path(suffix), "-genkey", "-name", opts.ecc_curve)
+    else:
+        print("Will use RSA...")
+        openssl_genrsa("-out", intermediate_ca_key_path(suffix), str(opts.key_bits))
+
     openssl_req("-new",
                 "-config",  openssl_cnf_path(),
                 "-key",     intermediate_ca_key_path(suffix),
@@ -129,7 +140,14 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
     print("Using parent certificate path at {}".format(parent_certificate_path))
     print("Using parent key path at {}".format(parent_key_path))
     os.makedirs(relative_path(peer), exist_ok = True)
-    openssl_genrsa("-out", leaf_key_path(peer), str(opts.key_bits))
+
+    if opts.use_ecc:
+        print("Will use Elliptic Curve Cryptography...")
+        openssl_ecparam("-out", leaf_key_path(peer), "-genkey", "-name", opts.ecc_curve)
+    else:
+        print("Will use RSA...")
+        openssl_genrsa("-out", leaf_key_path(peer), str(opts.key_bits))
+
     openssl_req("-new",
                 "-config",  openssl_cnf_path(),
                 "-key",     leaf_key_path(peer),

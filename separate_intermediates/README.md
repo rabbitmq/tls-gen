@@ -17,11 +17,23 @@ their respective intermediate CAs:
 Generated CA certificate as well as client and server certificate and private keys will be
 under the `result` directory.
 
+It possible to use [ECC](https://blog.cloudflare.com/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/) for intermediate and leaf keys:
+
+    make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+    # results will be under the ./result directory
+    ls -lha ./result
+
+The list of available curves can be obtained with
+
+    openssl ecparam -list_curves
+
 ### Regeneration
 
 To regenerate, use
 
     make regen PASSWORD=bunnies
+
+The `regen` target accepts the same variables as `gen` (default target) above.
 
 ### Verification
 
