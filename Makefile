@@ -11,7 +11,7 @@ CN := $(shell hostname)
 endif
 
 ifndef NUMBER_OF_PRIVATE_KEY_BITS
-NUMBER_OF_PRIVATE_KEY_BITS := 4096
+NUMBER_OF_PRIVATE_KEY_BITS := 2048
 endif
 
 ifndef DAYS_OF_VALIDITY
