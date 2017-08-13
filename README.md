@@ -127,6 +127,15 @@ It is possible to override CN with an environment variable:
     make PASSWORD=bunnies CN=secure.mydomain.local
 
 
+### Overriding Number of Private Key Bits
+
+It is possible to override the number of private key bits
+with an environment variable:
+
+    make PASSWORD=bunnies NUMBER_OF_PRIVATE_KEY_BITS=4096
+
+
+
 ### Certificate Information
 
 To display information about generated certificates, use
