@@ -11,6 +11,10 @@ def build_parser():
                  help = "Private key password")
     p.add_option("-n", "--common-name", dest = "common_name", action = "store",
                  help = "Certificate CN (Common Name)", default = socket.gethostname())
+    p.add_option("--client-alt-name", dest = "client_alt_name", action = "store",
+                 help = "SAN (subject Alternative Name) for the client", default = socket.gethostname())
+    p.add_option("--server-alt-name", dest = "server_alt_name", action = "store",
+                 help = "SAN (subject Alternative Name) for the server", default = socket.gethostname())
     p.add_option("-b", "--key-bits", dest = "key_bits", action = "store",
                  help = "Number of private key bits",
                  type = "int", default = 4096)

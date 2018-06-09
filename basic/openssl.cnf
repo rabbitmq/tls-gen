@@ -1,3 +1,10 @@
+# fallback values, as recommended in config(5)
+CLIENT_ALT_NAME="client.local"
+SERVER_ALT_NAME="server.local"
+
+CAN = $ENV::CLIENT_ALT_NAME
+SAN = $ENV::SERVER_ALT_NAME
+
 [ ca ]
 default_ca = test_root_ca
 
@@ -47,8 +54,20 @@ keyUsage         = keyCertSign, cRLSign
 basicConstraints = CA:false
 keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = 1.3.6.1.5.5.7.3.2
+subjectAltName   = @client_alt_names
 
 [ server_extensions ]
 basicConstraints = CA:false
 keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = 1.3.6.1.5.5.7.3.1
+subjectAltName   = @server_alt_names
+
+[ client_alt_names ]
+DNS.1 = $CAN
+# tls-gen is only meant to be used in development environments
+DNS.2 = localhost
+
+[ server_alt_names ]
+DNS.1 = $SAN
+# tls-gen is only meant to be used in development environments
+DNS.2 = localhost

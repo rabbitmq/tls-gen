@@ -10,6 +10,14 @@ ifndef CN
 CN := $(shell hostname)
 endif
 
+ifndef CLIENT_ALT_NAME
+CLIENT_ALT_NAME := $(shell hostname)
+endif
+
+ifndef SERVER_ALT_NAME
+SERVER_ALT_NAME := $(shell hostname)
+endif
+
 ifndef NUMBER_OF_PRIVATE_KEY_BITS
 NUMBER_OF_PRIVATE_KEY_BITS := 2048
 endif
@@ -41,10 +49,20 @@ clean:
 	$(PYTHON) profile.py clean
 
 gen:
-	$(PYTHON) profile.py generate --password $(PASS) --common-name $(CN) --days-of-validity $(DAYS_OF_VALIDITY) --key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
+	$(PYTHON) profile.py generate --password $(PASS) \
+	--common-name $(CN) \
+	--client-alt-name $(CLIENT_ALT_NAME) \
+	--server-alt-name $(SERVER_ALT_NAME) \
+	--days-of-validity $(DAYS_OF_VALIDITY) \
+	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
 regen:
-	$(PYTHON) profile.py regenerate --password $(PASS) --common-name $(CN) --days-of-validity $(DAYS_OF_VALIDITY) --key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
+	$(PYTHON) profile.py regenerate --password $(PASS) \
+	--common-name $(CN) \
+	--client-alt-name $(CLIENT_ALT_NAME) \
+	--server-alt-name $(SERVER_ALT_NAME) \
+	--days-of-validity $(DAYS_OF_VALIDITY) \
+	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
 info:
 	$(PYTHON) profile.py info
