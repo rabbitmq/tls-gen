@@ -21,7 +21,7 @@ Private keys can be generated using RSA as well as [ECC][ecc-intro].
 `tls-gen` requires
 
  * `openssl`
- * Python 3 in `PATH` as `python3` (Python 2.7 is *not* and will not be supported)
+ * Python 3.5 or later in `PATH` as `python3` (older versions are not supported)
  * `make`
 
 
