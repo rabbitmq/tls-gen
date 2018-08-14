@@ -1,6 +1,6 @@
 # -*- mode: BSDmakefile; tab-width: 8; indent-tabs-mode: nil -*-
 
-OPENSSL=openssl
+OPENSSL = openssl
 
 ifndef PYTHON
 PYTHON := python3

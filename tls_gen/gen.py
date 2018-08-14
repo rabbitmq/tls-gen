@@ -1,14 +1,46 @@
 import os
-from os import path
-from subprocess import run
 import shutil
 import stat
+import tempfile
+
+from os import path
+from subprocess import run
 
 from .paths import *
 
 #
 # General
 #
+
+generated_cnf_file = None
+
+def get_openssl_cnf_path(opts):
+    global generated_cnf_file
+
+    try:
+        if path.exists(generated_cnf_file):
+            return generated_cnf_file
+    except TypeError:
+        pass
+
+    cn = opts.common_name
+    client_alt_name = opts.client_alt_name or opts.common_name
+    server_alt_name = opts.server_alt_name or opts.common_name
+    cnf_path = openssl_cnf_path()
+    tmp_cnf_path = None
+
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as outfile:
+        with open(cnf_path, 'r') as infile:
+            in_cnf = infile.read()
+            out_cnf0 = in_cnf.replace('@COMMON_NAME@', cn)
+            out_cnf1 = out_cnf0.replace('@CLIENT_ALT_NAME@', client_alt_name)
+            out_cnf2 = out_cnf1.replace('@SERVER_ALT_NAME@', server_alt_name)
+            outfile.write(out_cnf2)
+            tmp_cnf_path = outfile.name
+
+    generated_cnf_file = tmp_cnf_path
+
+    return tmp_cnf_path
 
 def copy_root_ca_certificate_and_key_pair():
     copy_tuple_path((root_ca_dir_name, "cacert.pem"),           (result_dir_name, "ca_certificate.pem"))
@@ -19,11 +51,12 @@ def copy_leaf_certificate_and_key_pair(peer):
     copy_tuple_path((peer, "key.pem"),     (result_dir_name, "{}_key.pem".format(peer)))
     copy_tuple_path((peer, "keycert.p12"), (result_dir_name, "{}_key.p12".format(peer)))
 
-def openssl_req(*args, **kwargs):
+def openssl_req(opts, *args, **kwargs):
+    cnf_path = get_openssl_cnf_path(opts)
     print("=>\t[openssl_req]")
     # avoids requiring Python 3.5, see
     # https://www.python.org/dev/peps/pep-0448/
-    xs = ["openssl", "req"] + list(args)
+    xs = ["openssl", "req", "-config", cnf_path] + list(args)
     run(xs, **kwargs)
 
 def openssl_x509(*args, **kwargs):
@@ -41,9 +74,10 @@ def openssl_ecparam(*args, **kwargs):
     xs = ["openssl", "ecparam"] + list(args)
     run(xs, **kwargs)
 
-def openssl_ca(*args, **kwargs):
+def openssl_ca(opts, *args, **kwargs):
+    cnf_path = get_openssl_cnf_path(opts)
     print("=>\t[openssl_ca]")
-    xs = ["openssl", "ca"] + list(args)
+    xs = ["openssl", "ca", "-config", cnf_path] + list(args)
     run(xs, **kwargs)
 
 def prepare_ca_directory(dir_name):
@@ -69,9 +103,9 @@ def prepare_ca_directory(dir_name):
 def generate_root_ca(opts):
     prepare_ca_directory(root_ca_path())
 
-    openssl_req("-x509",
+    openssl_req(opts,
+                "-x509",
                 "-days",    str(opts.validity_days),
-                "-config",  openssl_cnf_path(),
                 "-newkey",  "rsa:{}".format(opts.key_bits),
                 "-keyout",  root_ca_key_path(),
                 "-out",     root_ca_certificate_path(),
@@ -103,13 +137,13 @@ def generate_intermediate_ca(opts,
         print("Will use RSA...")
         openssl_genrsa("-out", intermediate_ca_key_path(suffix), str(opts.key_bits))
 
-    openssl_req("-new",
-                "-config",  openssl_cnf_path(),
+    openssl_req(opts,
+                "-new",
                 "-key",     intermediate_ca_key_path(suffix),
                 "-out",     intermediate_ca_certificate_csr_path(suffix),
                 "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, "Intermediate CA {}".format(suffix)),
                 "-passout", "pass:{}".format(opts.password))
-    openssl_ca("-config",     openssl_cnf_path(),
+    openssl_ca(opts,
                "-days",       str(opts.validity_days),
                "-cert",       parent_certificate_path,
                "-keyfile",    parent_key_path,
@@ -135,18 +169,8 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
                                            parent_certificate_path = root_ca_certificate_path(),
                                            parent_key_path         = root_ca_key_path(),
                                            parent_certs_path       = root_ca_certs_path()):
-    env = os.environ.copy()
-
     print("Will generate leaf certificate and key pair for {}".format(peer))
     print("Using {} for Common Name (CN)".format(opts.common_name))
-
-    if peer == "client":
-        env["CLIENT_ALT_NAME"] = opts.client_alt_name or opts.common_name
-        print("Using {0} for client's SAN (alternative name)".format(env["CLIENT_ALT_NAME"]))
-
-    if peer == "server":
-        env["SERVER_ALT_NAME"] = opts.server_alt_name or opts.common_name
-        print("Using {0} for server's SAN (alternative name)".format(env["SERVER_ALT_NAME"]))
 
     print("Using parent certificate path at {}".format(parent_certificate_path))
     print("Using parent key path at {}".format(parent_key_path))
@@ -154,22 +178,21 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
 
     if opts.use_ecc:
         print("Will use Elliptic Curve Cryptography...")
-        openssl_ecparam("-out", leaf_key_path(peer), "-genkey", "-name", opts.ecc_curve, env = env)
+        openssl_ecparam("-out", leaf_key_path(peer), "-genkey", "-name", opts.ecc_curve)
     else:
         print("Will use RSA...")
-        openssl_genrsa("-out", leaf_key_path(peer), str(opts.key_bits), env = env)
+        openssl_genrsa("-out", leaf_key_path(peer), str(opts.key_bits))
 
-    openssl_req("-new",
-                "-config",  openssl_cnf_path(),
+    openssl_req(opts,
+                "-new",
                 "-key",     leaf_key_path(peer),
                 "-keyout",  leaf_certificate_path(peer),
                 "-out",     relative_path(peer, "req.pem"),
                 "-days",    str(opts.validity_days),
                 "-outform", "PEM",
                 "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer),
-                "-nodes",
-                env = env)
-    openssl_ca("-config",  openssl_cnf_path(),
+                "-nodes")
+    openssl_ca(opts,
                "-days",    str(opts.validity_days),
                "-cert",    parent_certificate_path,
                "-keyfile", parent_key_path,
@@ -178,12 +201,10 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
                "-outdir",  parent_certs_path,
                "-notext",
                "-batch",
-               "-extensions", "{}_extensions".format(peer),
-               env = env)
+               "-extensions", "{}_extensions".format(peer))
     run(["openssl", "pkcs12",
           "-export",
           "-out",     relative_path(peer, "keycert.p12"),
           "-in",      leaf_certificate_path(peer),
           "-inkey",   leaf_key_path(peer),
-          "-passout", "pass:{}".format(opts.password)],
-          env = env)
+          "-passout", "pass:{}".format(opts.password)])
