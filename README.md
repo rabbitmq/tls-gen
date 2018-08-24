@@ -41,7 +41,7 @@ the same `make` targets and directory layouts that are as close as possible.
 ### Profile 1 (Basic Profile)
 
 To generate a CA, client and server private key/certificate pairs, run
-`make` from the [basic](./basic) profile directory with `PASSWORD` environment variable
+`make` from the [basic](./basic) profile directory with the `PASSWORD` variable
 providing the passphrase:
 
     cd [path to tls-gen repository]/basic
@@ -122,19 +122,31 @@ You can verify the generated client and server certificates against the generate
 
 By default, certificate's CN ([Common Name](http://tldp.org/HOWTO/Apache-WebDAV-LDAP-HOWTO/glossary.html)) is calculated using `hostname`.
 
-It is possible to override CN with an environment variable:
+It is possible to override CN with a `make` variable:
 
     make PASSWORD=bunnies CN=secure.mydomain.local
 
+### Overriding Certificate Validity Period
+
+By default certificates will be valid for 3650 days (about 10 years). The period
+can be changed by overriding the `DAYS_OF_VALIDITY` variable
+
+    make PASSWORD=bunnies DAYS_OF_VALIDITY=365
+
+### Generating Expired Certificates
+
+It may be necessary to generate an expired certificate, e.g. to test TLS handshake
+and peer verification failures. To do so, set the certificate validity in
+days to a negative value:
+
+    make PASSWORD=bunnies DAYS_OF_VALIDITY=-7
 
 ### Overriding Number of Private Key Bits
 
 It is possible to override the number of private key bits
-with an environment variable:
+with a `make` variable:
 
     make PASSWORD=bunnies NUMBER_OF_PRIVATE_KEY_BITS=4096
-
-
 
 ### Certificate Information
 
@@ -143,6 +155,8 @@ To display information about generated certificates, use
     make info
 
 This assumes the certificates were previously generated.
+
+
 
 ## License
 
