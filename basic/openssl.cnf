@@ -50,6 +50,10 @@ commonName = hostname
 [ root_ca_extensions ]
 basicConstraints = CA:true
 keyUsage         = keyCertSign, cRLSign
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+basicConstraints = critical,CA:true
+
 
 [ client_extensions ]
 basicConstraints = CA:false
@@ -62,6 +66,8 @@ basicConstraints = CA:false
 keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = 1.3.6.1.5.5.7.3.1
 subjectAltName   = @server_alt_names
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
 
 [ client_alt_names ]
 DNS.1 = $common_name
