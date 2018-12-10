@@ -42,6 +42,9 @@ commonName = hostname
 [ root_ca_extensions ]
 basicConstraints = CA:true
 keyUsage         = keyCertSign, cRLSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical,CA:true
 
 [ ca_extensions ]
 basicConstraints = CA:true
@@ -56,3 +59,5 @@ extendedKeyUsage = clientAuth
 basicConstraints = CA:false
 keyUsage         = keyEncipherment
 extendedKeyUsage = serverAuth
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
