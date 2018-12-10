@@ -1,18 +1,17 @@
 ## TLS/SSL Certificate Generator
 
-These certificates are self-signed and supposed to be used for development.
+`tls-gen` is an OpenSSL-based tool that generates self-signed certificates that are
+meant to be used in development and QA environments.
 
-The project is extracted from a number of RabbitMQ test suites.
+The project is originally extracted from a number of [RabbitMQ](https://rabbitmq.com) test suites.
 
 
 ## What It Does
 
 `tls-gen` generates a self-signed Certificate Authority (CA) certificate
-and 2 pairs of keys: client and server, with a single command.
-It can also generate a chain of CA certificates.
+and two or more pairs of keys: client and server, all with a single command.
 
-Use these certificates in development and QA environments. They are self-signed and not intended to be used
-in production.
+It supports more than one profile that generate certificate chains of different length and "shape".
 
 Private keys can be generated using RSA as well as [ECC][ecc-intro].
 
@@ -29,7 +28,7 @@ Private keys can be generated using RSA as well as [ECC][ecc-intro].
 ## Usage
 
 Certificate authorities (CAs) and certificates can form chains. tls-gen provides
-different "profiles", for example:
+several "profiles" that produce different kinds of certificate chains:
 
  * [Profile 1](./basic/): a root CA with leaf certificate/key pairs signed by it
  * [Profile 2](./two_shared_intermediates/): a root CA with multiple shared intermediary certificates and leaf pairs signed by the intermediaries
