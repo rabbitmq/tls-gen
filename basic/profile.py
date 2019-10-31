@@ -4,33 +4,42 @@ import sys
 import os
 import shutil
 
-def _copy_artifacts_to_results():
+def _copy_artifacts_to_results(opts):
     os.makedirs(paths.relative_path("result"), exist_ok = True)
     gen.copy_root_ca_certificate_and_key_pair()
-    gen.copy_leaf_certificate_and_key_pair("server")
-    gen.copy_leaf_certificate_and_key_pair("client")
+    cn = opts.common_name
+    name = 'server_{}'.format(cn)
+    gen.copy_leaf_certificate_and_key_pair(name)
+    name = 'client_{}'.format(cn)
+    gen.copy_leaf_certificate_and_key_pair(name)
 
 def generate(opts):
     cli.ensure_password_is_provided(opts)
     print("Will generate a root CA and two certificate/key pairs (server and client)")
     gen.generate_root_ca(opts)
-    gen.generate_server_certificate_and_key_pair(opts)
-    gen.generate_client_certificate_and_key_pair(opts)
-    _copy_artifacts_to_results()
+    cn = opts.common_name
+    name = 'server_{}'.format(cn)
+    gen.generate_leaf_certificate_and_key_pair('server', opts, name)
+    name = 'client_{}'.format(cn)
+    gen.generate_leaf_certificate_and_key_pair('client', opts, name)
+    _copy_artifacts_to_results(opts)
     print("Done! Find generated certificates and private keys under ./result!")
 
 def generate_client(opts):
     cli.ensure_password_is_provided(opts)
     print("Will generate a certificate/key pair (client only)")
-    gen.generate_client_certificate_and_key_pair(opts)
-    gen.copy_leaf_certificate_and_key_pair("client")
+    cn = opts.common_name
+    name = 'client_{}'.format(cn)
+    gen.generate_leaf_certificate_and_key_pair('client', opts, name)
+    gen.copy_leaf_certificate_and_key_pair(name)
     print("Done! Find generated certificates and private keys under ./result!")
 
 def clean(opts):
+    cn = opts.common_name
     for s in [paths.root_ca_path(),
               paths.result_path(),
-              paths.leaf_pair_path("server"),
-              paths.leaf_pair_path("client")]:
+              paths.leaf_pair_path('server'.format(cn)),
+              paths.leaf_pair_path('client'.format(cn))]:
         print("Removing {}".format(s))
         try:
             shutil.rmtree(s)
@@ -43,8 +52,8 @@ def regenerate(opts):
 
 def verify(opts):
     print("Will verify generated certificates against the CA...")
-    verify.verify_leaf_certificate_against_root_ca("client")
-    verify.verify_leaf_certificate_against_root_ca("server")
+    verify.verify_leaf_certificate_against_root_ca('client_{}'.format(opts.common_name))
+    verify.verify_leaf_certificate_against_root_ca('server_{}'.format(opts.common_name))
 
 def verify_pkcs12(opts):
     cli.ensure_password_is_provided(opts)
