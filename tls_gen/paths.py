@@ -77,7 +77,6 @@ def leaf_certificate_path(peer):
 def leaf_key_path(peer):
     return relative_path(peer, "key.pem")
 
-
 #
 # Results directory
 #
