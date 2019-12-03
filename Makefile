@@ -10,6 +10,10 @@ ifndef CN
 CN := $(shell hostname)
 endif
 
+ifndef CRL
+CRL := "http://example.com/fake.crl.pem"
+endif
+
 ifndef CLIENT_ALT_NAME
 CLIENT_ALT_NAME := $(shell hostname)
 endif
@@ -53,6 +57,7 @@ gen:
 	--common-name $(CN) \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
+	--crl $(CRL) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
@@ -61,6 +66,7 @@ regen:
 	--common-name $(CN) \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
+	--crl $(CRL) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
