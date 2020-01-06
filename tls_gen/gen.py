@@ -36,7 +36,10 @@ def get_openssl_cnf_path(opts):
             out_cnf0 = in_cnf.replace('@COMMON_NAME@', cn)
             out_cnf1 = out_cnf0.replace('@CLIENT_ALT_NAME@', client_alt_name)
             out_cnf2 = out_cnf1.replace('@SERVER_ALT_NAME@', server_alt_name)
-            out_cnf3 = out_cnf2.replace('@CRL@', crl)
+            out_cnf3 = out_cnf2
+            if crl:
+                out_cnf3 = out_cnf2.replace('@crlDistributionPoints = URI:CRL@', "crlDistributionPoints = {0}".format(crl))
+
             outfile.write(out_cnf3)
             tmp_cnf_path = outfile.name
 

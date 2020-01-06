@@ -44,7 +44,7 @@ PASS = "$(PASSWORD)"
 endif
 
 ifdef CRL
-CRL := "--crl $(CRL)"
+CRL := "--crl $(CRL) \"
 endif
 
 all: regen verify
@@ -66,7 +66,7 @@ regen:
 	--common-name $(CN) \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
-	$(CRL) \
+	$(CRL)
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
