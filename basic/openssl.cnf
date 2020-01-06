@@ -59,12 +59,14 @@ basicConstraints = critical,CA:true
 basicConstraints = CA:false
 keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = clientAuth
+@crlDistributionPoints = URI:CRL@
 subjectAltName   = @client_alt_names
 
 [ server_extensions ]
 basicConstraints = CA:false
 keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = serverAuth
+@crlDistributionPoints = URI:CRL@
 subjectAltName   = @server_alt_names
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer
