@@ -49,8 +49,11 @@ def print_known_commands():
     print("Known commands: {}".format(s))
 
 def ensure_password_is_provided(options):
-    if options.password is None:
-        sys.stderr.write("Private key password must be specified.")
+    if len(options.password) == 0:
+        sys.stderr.write("Private key password must be specified.\n")
+        sys.exit(1)
+    elif len(options.password) < 4 or len(options.password) > 1023:
+        sys.stderr.write("Password length out of bounds, you must type in 4 to 1023 characters.\n")
         sys.exit(1)
 
 def run(commands):

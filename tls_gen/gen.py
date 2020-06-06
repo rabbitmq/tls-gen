@@ -64,14 +64,9 @@ def openssl_x509(*args, **kwargs):
     xs = ["openssl", "x509"] + list(args)
     run(xs, **kwargs)
 
-def openssl_genrsa(*args, **kwargs):
-    print("=>\t[openssl_genrsa]")
-    xs = ["openssl", "genrsa"] + list(args)
-    run(xs, **kwargs)
-
-def openssl_ecparam(*args, **kwargs):
-    print("=>\t[openssl_ecparam]")
-    xs = ["openssl", "ecparam"] + list(args)
+def openssl_genpkey(*args, **kwargs):
+    print("=>\t[openssl_genpkey]")
+    xs = ["openssl", "genpkey"] + list(args)
     run(xs, **kwargs)
 
 def openssl_ca(opts, *args, **kwargs):
@@ -108,10 +103,10 @@ def generate_root_ca(opts):
                 "-days",    str(opts.validity_days),
                 "-newkey",  "rsa:{}".format(opts.key_bits),
                 "-keyout",  root_ca_key_path(),
+                "-passout", "pass:{}".format(opts.password),
                 "-out",     root_ca_certificate_path(),
                 "-outform", "PEM",
-                "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/",
-                "-nodes")
+                "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/")
     openssl_x509("-in",      root_ca_certificate_path(),
                  "-out",     root_ca_certificate_cer_path(),
                  "-outform", "DER")
@@ -132,14 +127,25 @@ def generate_intermediate_ca(opts,
 
     if opts.use_ecc:
         print("Will use Elliptic Curve Cryptography...")
-        openssl_ecparam("-out", intermediate_ca_key_path(suffix), "-genkey", "-name", opts.ecc_curve)
+        openssl_genpkey("-algorithm", "EC",
+                        "-outform",   "PEM",
+                        "-aes256",
+                        "-pass",      "pass:{}".format(opts.password),
+                        "-out",       intermediate_ca_key_path(suffix),
+                        "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve))
     else:
         print("Will use RSA...")
-        openssl_genrsa("-out", intermediate_ca_key_path(suffix), str(opts.key_bits))
+        openssl_genpkey("-algorithm", "RSA",
+                        "-outform",   "PEM",
+                        "-aes256",
+                        "-pass",      "pass:{}".format(opts.password),
+                        "-out",       intermediate_ca_key_path(suffix),
+                        "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits)))
 
     openssl_req(opts,
                 "-new",
                 "-key",     intermediate_ca_key_path(suffix),
+                "-passin",  "pass:{}".format(opts.password),
                 "-out",     intermediate_ca_certificate_csr_path(suffix),
                 "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, "Intermediate CA {}".format(suffix)),
                 "-passout", "pass:{}".format(opts.password))
@@ -147,6 +153,7 @@ def generate_intermediate_ca(opts,
                "-days",       str(opts.validity_days),
                "-cert",       parent_certificate_path,
                "-keyfile",    parent_key_path,
+               "-passin",     "pass:{}".format(opts.password),
                "-in",         intermediate_ca_certificate_csr_path(suffix),
                "-out",        intermediate_ca_certificate_path(suffix),
                "-outdir",     intermediate_ca_certs_path(suffix),
@@ -178,24 +185,35 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
 
     if opts.use_ecc:
         print("Will use Elliptic Curve Cryptography...")
-        openssl_ecparam("-out", leaf_key_path(peer), "-genkey", "-name", opts.ecc_curve)
+        openssl_genpkey("-algorithm", "EC",
+                        "-outform",   "PEM",
+                        "-aes256",
+                        "-pass",      "pass:{}".format(opts.password),
+                        "-out",       leaf_key_path(peer),
+                        "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve))
     else:
         print("Will use RSA...")
-        openssl_genrsa("-out", leaf_key_path(peer), str(opts.key_bits))
+        openssl_genpkey("-algorithm", "RSA",
+                        "-outform",   "PEM",
+                        "-aes256",
+                        "-pass",      "pass:{}".format(opts.password),
+                        "-out",       leaf_key_path(peer),
+                        "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits)))
 
     openssl_req(opts,
                 "-new",
                 "-key",     leaf_key_path(peer),
+                "-passin",  "pass:{}".format(opts.password),
                 "-keyout",  leaf_certificate_path(peer),
+                "-passout", "pass:{}".format(opts.password),
                 "-out",     relative_path(peer, "req.pem"),
-                "-days",    str(opts.validity_days),
                 "-outform", "PEM",
-                "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer),
-                "-nodes")
+                "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer))
     openssl_ca(opts,
                "-days",    str(opts.validity_days),
                "-cert",    parent_certificate_path,
                "-keyfile", parent_key_path,
+               "-passin", "pass:{}".format(opts.password),
                "-in",      relative_path(peer, "req.pem"),
                "-out",     leaf_certificate_path(peer),
                "-outdir",  parent_certs_path,
@@ -207,4 +225,5 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
           "-out",     relative_path(peer, "keycert.p12"),
           "-in",      leaf_certificate_path(peer),
           "-inkey",   leaf_key_path(peer),
+          "-passin",  "pass:{}".format(opts.password),
           "-passout", "pass:{}".format(opts.password)])
