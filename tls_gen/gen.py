@@ -91,11 +91,6 @@ def prepare_ca_directory(dir_name):
     index_txt = open(relative_path(dir_name, "index.txt.attr"), "w")
     index_txt.close
 
-def maybe_add_password_arg(args, password, argument, format_str):
-    if len(password) > 0:
-        args.append(argument)
-        args.append(format_str.format(password))
-
 #
 # Root CA
 #
@@ -109,7 +104,11 @@ def generate_root_ca(opts):
             "-out",     root_ca_certificate_path(),
             "-outform", "PEM",
             "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/"]
-    maybe_add_password_arg(args, opts.password, "-passout", "pass:{}")
+    if len(opts.password) > 0:
+        args.append("-pass")
+        args.append(format_str.format(password))
+    else:
+        args.append("-nodes")
     openssl_req(opts, *args)
     openssl_x509("-in",      root_ca_certificate_path(),
                  "-out",     root_ca_certificate_cer_path(),
@@ -136,7 +135,11 @@ def generate_intermediate_ca(opts,
                 "-aes256",
                 "-out",       intermediate_ca_key_path(suffix),
                 "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve)]
-        maybe_add_password_arg(args, opts.password, "-pass", "pass:{}")
+        if len(opts.password) > 0:
+            args.append("-pass")
+            args.append(format_str.format(password))
+        else:
+            args.append("-nodes")
         openssl_genpkey(*args)
     else:
         print("Will use RSA...")
@@ -145,27 +148,31 @@ def generate_intermediate_ca(opts,
                 "-aes256",
                 "-out",       intermediate_ca_key_path(suffix),
                 "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits))]
-        maybe_add_password_arg(args, opts.password, "-pass", "pass:{}")
+        if len(opts.password) > 0:
+            args.append("-pass")
+            args.append(format_str.format(password))
+        else:
+            args.append("-nodes")
         openssl_genpkey(*args)
 
     args = ["-new",
+            "-passin",  "pass:{}".format(opts.password),
+            "-passout", "pass:{}".format(opts.password),
             "-key",     intermediate_ca_key_path(suffix),
             "-out",     intermediate_ca_certificate_csr_path(suffix),
             "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, "Intermediate CA {}".format(suffix))]
-    maybe_add_password_arg(args, opts.password, "-passin", "pass:{}")
-    maybe_add_password_arg(args, opts.password, "-passout", "pass:{}")
     openssl_req(*args)
 
     args = ["-days",       str(opts.validity_days),
             "-cert",       parent_certificate_path,
             "-keyfile",    parent_key_path,
+            "-passin",  "pass:{}".format(opts.password),
             "-in",         intermediate_ca_certificate_csr_path(suffix),
             "-out",        intermediate_ca_certificate_path(suffix),
             "-outdir",     intermediate_ca_certs_path(suffix),
             "-notext",
             "-batch",
             "-extensions", "ca_extensions"]
-    maybe_add_password_arg(args, opts.password, "-passin", "pass:{}")
     openssl_ca(*args)
 
 
@@ -195,9 +202,9 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
         args = ["-algorithm", "EC",
                 "-outform",   "PEM",
                 "-aes256",
+                "-pass",      "pass:{}".format(opts.password),
                 "-out",       leaf_key_path(peer),
                 "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve)]
-        maybe_add_password_arg(args, opts.password, "-pass", "pass:{}")
         openssl_genpkey(*args)
     else:
         print("Will use RSA...")
@@ -207,38 +214,36 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
                 "-pass",      "pass:{}".format(opts.password),
                 "-out",       leaf_key_path(peer),
                 "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits))]
-        maybe_add_password_arg(args, opts.password, "-pass", "pass:{}")
         openssl_genpkey(*args)
 
     args = ["-new",
             "-key",     leaf_key_path(peer),
             "-passin",  "pass:{}".format(opts.password),
             "-keyout",  leaf_certificate_path(peer),
+            "-passin",  "pass:{}".format(opts.password),
             "-passout", "pass:{}".format(opts.password),
             "-out",     relative_path(peer, "req.pem"),
             "-outform", "PEM",
             "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer)]
-    maybe_add_password_arg(args, opts.password, "-passin", "pass:{}")
-    maybe_add_password_arg(args, opts.password, "-passout", "pass:{}")
     openssl_req(*args)
 
     args = ["-days",    str(opts.validity_days),
             "-cert",    parent_certificate_path,
             "-keyfile", parent_key_path,
+            "-passin",  "pass:{}".format(opts.password),
             "-in",      relative_path(peer, "req.pem"),
             "-out",     leaf_certificate_path(peer),
             "-outdir",  parent_certs_path,
             "-notext",
             "-batch",
             "-extensions", "{}_extensions".format(peer)]
-    maybe_add_password_arg(args, opts.password, "-passin", "pass:{}")
     openssl_ca(*args)
 
     args = ["openssl", "pkcs12",
             "-export",
+            "-passin",  "pass:{}".format(opts.password),
+            "-passout", "pass:{}".format(opts.password),
             "-out",     relative_path(peer, "keycert.p12"),
             "-in",      leaf_certificate_path(peer),
             "-inkey",   leaf_key_path(peer)]
-    maybe_add_password_arg(args, opts.password, "-passin", "pass:{}")
-    maybe_add_password_arg(args, opts.password, "-passout", "pass:{}")
     run(args)
