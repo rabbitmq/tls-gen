@@ -8,7 +8,7 @@ def build_parser():
     p = OptionParser(usage = "usage: %prog [options] (generate|clean|regenerate|verify|info)")
     p.add_option("-p", "--password",
                  type = "string", dest = "password", action = "store",
-                 help = "Private key password")
+                 help = "Private key password", default = "")
     p.add_option("-n", "--common-name", dest = "common_name", action = "store",
                  help = "Certificate CN (Common Name)", default = socket.gethostname())
     p.add_option("--client-alt-name", dest = "client_alt_name", action = "store",
@@ -48,11 +48,8 @@ def print_known_commands():
     s = ", ".join(list(f.__name__ for f in commands.values()))
     print("Known commands: {}".format(s))
 
-def ensure_password_is_provided(options):
-    if len(options.password) == 0:
-        sys.stderr.write("Private key password must be specified.\n")
-        sys.exit(1)
-    elif len(options.password) < 4 or len(options.password) > 1023:
+def validate_password_if_provided(options):
+    if len(options.password) > 0 and (len(options.password) < 4 or len(options.password) > 1023):
         sys.stderr.write("Password must be between 4 and 1023 characters in length.\n")
         sys.exit(1)
 

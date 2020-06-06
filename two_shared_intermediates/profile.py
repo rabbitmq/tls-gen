@@ -24,7 +24,7 @@ def _concat_certificates():
     chain_file.close
 
 def generate(opts):
-    cli.ensure_password_is_provided(opts)
+    cli.validate_password_if_provided(opts)
     print("Will generate a root CA and two certificate/key pairs (server and client)")
     gen.generate_root_ca(opts)
     print("Will generate first intermediate CA signed by the root CA")
