@@ -53,7 +53,7 @@ def ensure_password_is_provided(options):
         sys.stderr.write("Private key password must be specified.\n")
         sys.exit(1)
     elif len(options.password) < 4 or len(options.password) > 1023:
-        sys.stderr.write("Password length out of bounds, you must type in 4 to 1023 characters.\n")
+        sys.stderr.write("Password must be between 4 and 1023 characters in length.\n")
         sys.exit(1)
 
 def run(commands):
