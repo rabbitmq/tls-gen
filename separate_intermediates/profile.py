@@ -28,7 +28,7 @@ def _concat_ca_certificates_of(peer):
     chain_file.close
 
 def generate(opts):
-    cli.ensure_password_is_provided(opts)
+    cli.validate_password_if_provided(opts)
     print("Will generate a root CA")
     gen.generate_root_ca(opts)
     print("Will generate an intermediate CA for server certificate")

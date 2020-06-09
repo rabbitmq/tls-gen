@@ -6,13 +6,12 @@ import shutil
 
 def _copy_artifacts_to_results():
     os.makedirs(paths.relative_path("result"), exist_ok = True)
-
     gen.copy_root_ca_certificate_and_key_pair()
     gen.copy_leaf_certificate_and_key_pair("server")
     gen.copy_leaf_certificate_and_key_pair("client")
 
 def generate(opts):
-    cli.ensure_password_is_provided(opts)
+    cli.validate_password_if_provided(opts)
     print("Will generate a root CA and two certificate/key pairs (server and client)")
     gen.generate_root_ca(opts)
     gen.generate_server_certificate_and_key_pair(opts)
@@ -41,8 +40,7 @@ def verify(opts):
     verify.verify_leaf_certificate_against_root_ca("server")
 
 def verify_pkcs12(opts):
-    cli.ensure_password_is_provided(opts)
-
+    cli.validate_password_if_provided(opts)
     print("Will verify generated PKCS12 certificate stores...")
     verify.verify_pkcs12_store("client", opts)
     verify.verify_pkcs12_store("server", opts)
