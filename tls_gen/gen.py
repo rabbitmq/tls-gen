@@ -75,6 +75,11 @@ def openssl_ca(opts, *args, **kwargs):
     xs = ["openssl", "ca", "-config", cnf_path] + list(args)
     run(xs, **kwargs)
 
+def openssl_pkcs12(*args, **kwargs):
+    print("=>\t[openssl_pkcs12]")
+    xs = ["openssl", "pkcs12"] + list(args)
+    run(xs, **kwargs)
+
 def prepare_ca_directory(dir_name):
     os.makedirs(relative_path(dir_name), exist_ok = True)
     os.makedirs(relative_path(dir_name, "certs"),   exist_ok = True)
@@ -105,8 +110,8 @@ def generate_root_ca(opts):
             "-outform", "PEM",
             "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/"]
     if len(opts.password) > 0:
-        args.append("-pass")
-        args.append(format_str.format(password))
+        args.append("-passout")
+        args.append("pass:{}".format(opts.password))
     else:
         args.append("-nodes")
     openssl_req(opts, *args)
@@ -132,48 +137,47 @@ def generate_intermediate_ca(opts,
         print("Will use Elliptic Curve Cryptography...")
         args = ["-algorithm", "EC",
                 "-outform",   "PEM",
-                "-aes256",
                 "-out",       intermediate_ca_key_path(suffix),
                 "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve)]
-        if len(opts.password) > 0:
-            args.append("-pass")
-            args.append(format_str.format(password))
-        else:
-            args.append("-nodes")
-        openssl_genpkey(*args)
     else:
         print("Will use RSA...")
         args = ["-algorithm", "RSA",
                 "-outform",   "PEM",
-                "-aes256",
                 "-out",       intermediate_ca_key_path(suffix),
                 "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits))]
-        if len(opts.password) > 0:
-            args.append("-pass")
-            args.append(format_str.format(password))
-        else:
-            args.append("-nodes")
-        openssl_genpkey(*args)
+
+    if len(opts.password) > 0:
+        args.append("-aes256")
+        args.append("-pass")
+        args.append("pass:{}".format(opts.password))
+    openssl_genpkey(*args)
 
     args = ["-new",
-            "-passin",  "pass:{}".format(opts.password),
-            "-passout", "pass:{}".format(opts.password),
             "-key",     intermediate_ca_key_path(suffix),
             "-out",     intermediate_ca_certificate_csr_path(suffix),
             "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, "Intermediate CA {}".format(suffix))]
-    openssl_req(*args)
+    if len(opts.password) > 0:
+        args.append("-passin")
+        args.append("pass:{}".format(opts.password))
+        args.append("-passout")
+        args.append("pass:{}".format(opts.password))
+    else:
+        args.append("-nodes")
+    openssl_req(opts, *args)
 
     args = ["-days",       str(opts.validity_days),
             "-cert",       parent_certificate_path,
             "-keyfile",    parent_key_path,
-            "-passin",  "pass:{}".format(opts.password),
             "-in",         intermediate_ca_certificate_csr_path(suffix),
             "-out",        intermediate_ca_certificate_path(suffix),
             "-outdir",     intermediate_ca_certs_path(suffix),
             "-notext",
             "-batch",
             "-extensions", "ca_extensions"]
-    openssl_ca(*args)
+    if len(opts.password) > 0:
+        args.append("-passin")
+        args.append("pass:{}".format(opts.password))
+    openssl_ca(opts, *args)
 
 
 #
@@ -201,49 +205,56 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
         print("Will use Elliptic Curve Cryptography...")
         args = ["-algorithm", "EC",
                 "-outform",   "PEM",
-                "-aes256",
-                "-pass",      "pass:{}".format(opts.password),
                 "-out",       leaf_key_path(peer),
                 "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve)]
-        openssl_genpkey(*args)
     else:
         print("Will use RSA...")
         args = ["-algorithm", "RSA",
                 "-outform",   "PEM",
-                "-aes256",
-                "-pass",      "pass:{}".format(opts.password),
                 "-out",       leaf_key_path(peer),
                 "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits))]
-        openssl_genpkey(*args)
+
+    if len(opts.password) > 0:
+        args.append("-aes256")
+        args.append("-pass")
+        args.append("pass:{}".format(opts.password))
+    openssl_genpkey(*args)
 
     args = ["-new",
             "-key",     leaf_key_path(peer),
-            "-passin",  "pass:{}".format(opts.password),
             "-keyout",  leaf_certificate_path(peer),
-            "-passin",  "pass:{}".format(opts.password),
-            "-passout", "pass:{}".format(opts.password),
             "-out",     relative_path(peer, "req.pem"),
             "-outform", "PEM",
             "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer)]
-    openssl_req(*args)
+    if len(opts.password) > 0:
+        args.append("-passin")
+        args.append("pass:{}".format(opts.password))
+        args.append("-passout")
+        args.append("pass:{}".format(opts.password))
+    else:
+        args.append("-nodes")
+    openssl_req(opts, *args)
 
     args = ["-days",    str(opts.validity_days),
             "-cert",    parent_certificate_path,
             "-keyfile", parent_key_path,
-            "-passin",  "pass:{}".format(opts.password),
             "-in",      relative_path(peer, "req.pem"),
             "-out",     leaf_certificate_path(peer),
             "-outdir",  parent_certs_path,
             "-notext",
             "-batch",
             "-extensions", "{}_extensions".format(peer)]
-    openssl_ca(*args)
+    if len(opts.password) > 0:
+        args.append("-passin")
+        args.append("pass:{}".format(opts.password))
+    openssl_ca(opts, *args)
 
-    args = ["openssl", "pkcs12",
-            "-export",
-            "-passin",  "pass:{}".format(opts.password),
-            "-passout", "pass:{}".format(opts.password),
+    args = ["-export",
             "-out",     relative_path(peer, "keycert.p12"),
             "-in",      leaf_certificate_path(peer),
-            "-inkey",   leaf_key_path(peer)]
-    run(args)
+            "-inkey",   leaf_key_path(peer),
+            "-passout", "pass:{}".format(opts.password)]
+    if len(opts.password) > 0:
+        args.append("-passin")
+        args.append("pass:{}".format(opts.password))
+    openssl_pkcs12(*args)
