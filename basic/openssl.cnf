@@ -73,6 +73,10 @@ authorityKeyIdentifier = keyid,issuer
 DNS.1 = $common_name
 DNS.2 = $client_alt_name
 DNS.3 = localhost
+# examples of more Subject Alternative Names
+# DNS.4 = guest
+# email = guest@warp10.local
+# URI   = amqps://123.client.warp10.local
 
 [ server_alt_names ]
 DNS.1 = $common_name
