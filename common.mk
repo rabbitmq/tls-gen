@@ -63,6 +63,13 @@ gen:
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
+gen-client:
+	$(PYTHON) profile.py generate-client --password $(PASS) \
+	--common-name $(CN) \
+	--client-alt-name $(CLIENT_ALT_NAME) \
+	--days-of-validity $(DAYS_OF_VALIDITY) \
+	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
+
 regen:
 	$(PYTHON) profile.py regenerate --password $(PASS) \
 	--common-name $(CN) \

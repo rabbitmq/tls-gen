@@ -28,6 +28,12 @@ The list of available curves can be obtained with
 
     openssl ecparam -list_curves
 
+### Generate additional client certificate
+
+If you want to generate additiona client certificate for the same server certificate, use
+
+    make gen-client CN=newname PASSWORD=bunnies
+
 ### Regeneration
 
 To regenerate, use

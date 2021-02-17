@@ -102,7 +102,6 @@ The list of available curves can be obtained with
 
     openssl ecparam -list_curves
 
-
 ### Regeneration
 
 To generate a new set of keys and certificates, use

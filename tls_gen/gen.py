@@ -198,27 +198,34 @@ def generate_client_certificate_and_key_pair(opts, **kwargs):
     generate_leaf_certificate_and_key_pair("client", opts, **kwargs)
 
 def generate_leaf_certificate_and_key_pair(peer, opts,
+                                           peer_path = None,
                                            parent_certificate_path = root_ca_certificate_path(),
                                            parent_key_path         = root_ca_key_path(),
                                            parent_certs_path       = root_ca_certs_path()):
+    
+    if peer_path:
+        pp = peer_path
+    else:
+        pp = peer
+
     print("Will generate leaf certificate and key pair for {}".format(peer))
     print("Using {} for Common Name (CN)".format(opts.common_name))
 
     print("Using parent certificate path at {}".format(parent_certificate_path))
     print("Using parent key path at {}".format(parent_key_path))
-    os.makedirs(relative_path(peer), exist_ok = True)
+    os.makedirs(relative_path(pp), exist_ok = True)
 
     if opts.use_ecc:
         print("Will use Elliptic Curve Cryptography...")
         args = ["-algorithm", "EC",
                 "-outform",   "PEM",
-                "-out",       leaf_key_path(peer),
+                "-out",       leaf_key_path(pp),
                 "-pkeyopt",   "ec_paramgen_curve:{}".format(opts.ecc_curve)]
     else:
         print("Will use RSA...")
         args = ["-algorithm", "RSA",
                 "-outform",   "PEM",
-                "-out",       leaf_key_path(peer),
+                "-out",       leaf_key_path(pp),
                 "-pkeyopt",   "rsa_keygen_bits:{}".format(str(opts.key_bits))]
 
     if len(opts.password) > 0:
@@ -228,9 +235,9 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
     openssl_genpkey(*args)
 
     args = ["-new",
-            "-key",     leaf_key_path(peer),
-            "-keyout",  leaf_certificate_path(peer),
-            "-out",     relative_path(peer, "req.pem"),
+            "-key",     leaf_key_path(pp),
+            "-keyout",  leaf_certificate_path(pp),
+            "-out",     relative_path(pp, "req.pem"),
             "-outform", "PEM",
             "-subj",    "/CN={}/O={}/L=$$$$/".format(opts.common_name, peer)]
     if len(opts.password) > 0:
@@ -245,8 +252,8 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
     args = ["-days",    str(opts.validity_days),
             "-cert",    parent_certificate_path,
             "-keyfile", parent_key_path,
-            "-in",      relative_path(peer, "req.pem"),
-            "-out",     leaf_certificate_path(peer),
+            "-in",      relative_path(pp, "req.pem"),
+            "-out",     leaf_certificate_path(pp),
             "-outdir",  parent_certs_path,
             "-notext",
             "-batch",
@@ -257,9 +264,9 @@ def generate_leaf_certificate_and_key_pair(peer, opts,
     openssl_ca(opts, *args)
 
     args = ["-export",
-            "-out",     relative_path(peer, "keycert.p12"),
-            "-in",      leaf_certificate_path(peer),
-            "-inkey",   leaf_key_path(peer),
+            "-out",     relative_path(pp, "keycert.p12"),
+            "-in",      leaf_certificate_path(pp),
+            "-inkey",   leaf_key_path(pp),
             "-passout", "pass:{}".format(opts.password)]
     if len(opts.password) > 0:
         args.append("-passin")
