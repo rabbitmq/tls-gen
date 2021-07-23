@@ -86,7 +86,7 @@ jobs:
         # Clean
         make clean
   builds-osx:
-    runs-on: macos-11
+    runs-on: macos-lastest
     strategy:
       fail-fast: false
       matrix:
