@@ -37,14 +37,14 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run basic generation
       run: |
-      # Run generate
-      make generate
-      # Info
-      make info
-      # Verify
-      make verify
-      # Clean
-      make clean
+        # Run generate
+        make generate
+        # Info
+        make info
+        # Verify
+        make verify
+        # Clean
+        make clean
 
 
 
