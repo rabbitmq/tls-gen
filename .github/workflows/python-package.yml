@@ -39,7 +39,7 @@ jobs:
       run: |
         cd basic/
         # Run generate
-        make generate
+        make
         # Info
         make info
         # Verify
