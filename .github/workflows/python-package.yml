@@ -37,15 +37,29 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run basic generation
       run: |
-        cd basic/
-        # Run generate
-        make
+        make -C basic
         # Info
-        make info
+        make -C basic info
         # Verify
-        make verify
+        make -C basic verify
         # Clean
-        make clean
+        make -C basic clean
+        #generate seperat intermediates
+        make -C separate_intermediates
+        # Info
+        make -C separate_intermediates info
+        # Verify
+        make -C separate_intermediates verify
+        # Clean
+        make -C separate_intermediates clean
+        # generate two_shared
+        make -C two_shared_intermediates
+        # Info
+        make -C two_shared_intermediates info
+        # Verify
+        make -C two_shared_intermediates verify
+        # Clean
+        make -C two_shared_intermediates clean
   builds-windows:
 
     runs-on: windows-latest
@@ -76,15 +90,29 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run basic generation
       run: |
-        cd basic/
-        # Run generate
-        make
+        make -C basic
         # Info
-        make info
+        make -C basic info
         # Verify
-        make verify
+        make -C basic verify
         # Clean
-        make clean
+        make -C basic clean
+        #generate seperat intermediates
+        make -C separate_intermediates
+        # Info
+        make -C separate_intermediates info
+        # Verify
+        make -C separate_intermediates verify
+        # Clean
+        make -C separate_intermediates clean
+        # generate two_shared
+        make -C two_shared_intermediates
+        # Info
+        make -C two_shared_intermediates info
+        # Verify
+        make -C two_shared_intermediates verify
+        # Clean
+        make -C two_shared_intermediates clean
   builds-osx:
     runs-on: macos-latest
     strategy:
@@ -111,12 +139,26 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run basic generation
       run: |
-        cd basic/
-        # Run generate
-        make
+        make -C basic
         # Info
-        make info
+        make -C basic info
         # Verify
-        make verify
+        make -C basic verify
         # Clean
-        make clean
+        make -C basic clean
+        #generate seperat intermediates
+        make -C separate_intermediates
+        # Info
+        make -C separate_intermediates info
+        # Verify
+        make -C separate_intermediates verify
+        # Clean
+        make -C separate_intermediates clean
+        # generate two_shared
+        make -C two_shared_intermediates
+        # Info
+        make -C two_shared_intermediates info
+        # Verify
+        make -C two_shared_intermediates verify
+        # Clean
+        make -C two_shared_intermediates clean
