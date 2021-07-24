@@ -47,11 +47,11 @@ def dispatch_command(commands, parser, args, options):
         parser.print_help()
         sys.exit(1)
     except KeyError:
-        print_known_commands()
+        print_known_commands(commands)
         parser.print_help()
         sys.exit(1)
 
-def print_known_commands():
+def print_known_commands(commands):
     s = ", ".join(list(f.__name__ for f in commands.values()))
     print("Known commands: {}".format(s))
 
