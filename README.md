@@ -22,6 +22,7 @@ Private keys can be generated using RSA as well as [ECC][ecc-intro].
  * `openssl`
  * Python 3.6 or later in `PATH` as `python3` (older versions are not supported)
  * `make`
+ * `hostname`
 
 
 
