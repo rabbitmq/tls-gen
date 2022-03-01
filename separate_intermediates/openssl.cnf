@@ -61,13 +61,13 @@ keyUsage         = keyCertSign, cRLSign
 
 [ client_extensions ]
 basicConstraints = CA:false
-keyUsage         = digitalSignature
+keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = clientAuth
 subjectAltName   = @client_alt_names
 
 [ server_extensions ]
 basicConstraints = CA:false
-keyUsage         = keyEncipherment
+keyUsage         = digitalSignature,keyEncipherment
 extendedKeyUsage = serverAuth
 subjectAltName   = @server_alt_names
 subjectKeyIdentifier = hash
