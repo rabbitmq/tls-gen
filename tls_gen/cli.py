@@ -60,6 +60,11 @@ def validate_password_if_provided(options):
         sys.stderr.write("Password must be between 4 and 1023 characters in length.\n")
         sys.exit(1)
 
+def ensure_password_is_provided(options):
+    if options.password is None:
+        sys.stderr.write("Private key password must be specified.")
+        sys.exit(1)
+
 def run(commands):
     parser = build_parser()
     (options, args) = parser.parse_args()
