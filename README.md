@@ -48,6 +48,14 @@ providing the passphrase:
 cd [path to tls-gen repository]/basic
 # pass a password using the PASSWORD variable
 make PASSWORD=bunnies
+
+## copy or move files to use hostname-neutral filenames,
+## this step is optional
+# cp result/client_$(hostname)_certificate.pem result/client_certificate.pem
+# cp result/client_$(hostname)_key.pem         result/client_key.pem
+# cp result/server_$(hostname)_certificate.pem result/server_certificate.pem
+# cp result/server_$(hostname)_key.pem         result/server_key.pem
+
 # results will be under the ./result directory
 ls -lha ./result
 ```
