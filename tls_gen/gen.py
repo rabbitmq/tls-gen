@@ -10,6 +10,7 @@ import shutil
 import stat
 import tempfile
 
+from datetime import datetime
 from os import path
 from subprocess import run
 
@@ -109,13 +110,14 @@ def prepare_ca_directory(dir_name):
 
 def generate_root_ca(opts):
     prepare_ca_directory(root_ca_path())
+    iso_date = datetime.now().isoformat()
     args = ["-x509",
             "-days",    str(opts.validity_days),
             "-newkey",  "rsa:{}".format(opts.key_bits),
             "-keyout",  root_ca_key_path(),
             "-out",     root_ca_certificate_path(),
             "-outform", "PEM",
-            "-subj",    "/CN=TLSGenSelfSignedtRootCA/L=$$$$/"]
+            "-subj",    "/CN=TLSGenSelfSignedtRootCA {}/L=$$$$/".format(iso_date)]
     if len(opts.password) > 0:
         args.append("-passout")
         args.append("pass:{}".format(opts.password))
