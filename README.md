@@ -46,8 +46,8 @@ providing the passphrase:
 
 ``` shell
 cd [path to tls-gen repository]/basic
-# pass a password using the PASSWORD variable
-make PASSWORD=bunnies
+# pass a private key password using the PASSWORD variable if needed
+make
 
 ## copy or move files to use hostname-neutral filenames,
 ## this step is optional
@@ -67,8 +67,8 @@ It possible to use [ECC][ecc-intro] for leaf keys:
 
 ``` shell
 cd [path to tls-gen repository]/basic
-# pass a password using the PASSWORD variable
-make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+# pass a private key password using the PASSWORD variable if needed
+make USE_ECC=true ECC_CURVE="prime256v1"
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -85,7 +85,8 @@ To generate a root CA, 2 shared intermediate CAs, client and server key/certific
 the [two_shared_intermediates](./two_shared_intermediates) directory:
 
 ``` shell
-make PASSWORD=bunnies
+# pass a private key password using the PASSWORD variable if needed
+make
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -93,7 +94,7 @@ ls -lha ./result
 It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
 
 ``` shell
-make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+make USE_ECC=true ECC_CURVE="prime256v1"
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -110,7 +111,8 @@ To generate a root CA, 2 intermediate CAs (one for server, one for client), clie
 the [separate_intermediates](./separate_intermediates) directory:
 
 ``` shell
-make PASSWORD=bunnies
+# pass a private key password using the PASSWORD variable if needed
+make
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -118,7 +120,7 @@ ls -lha ./result
 It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
 
 ``` shell
-make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+make USE_ECC=true ECC_CURVE="prime256v1"
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -134,7 +136,8 @@ openssl ecparam -list_curves
 To generate a new set of keys and certificates, use
 
 ``` shell
-make regen PASSWORD=bunnies
+# pass a private key password using the PASSWORD variable if needed
+make regen
 ```
 
 The `regen` target accepts the same variables as `gen` (default target) above.
@@ -154,7 +157,7 @@ By default, certificate's CN ([Common Name](http://tldp.org/HOWTO/Apache-WebDAV-
 It is possible to override CN with a `make` variable:
 
 ``` shell
-make PASSWORD=bunnies CN=secure.mydomain.local
+make CN=secure.mydomain.local
 ```
 
 ### Overriding Certificate Validity Period
@@ -163,7 +166,7 @@ By default certificates will be valid for 3650 days (about 10 years). The period
 can be changed by overriding the `DAYS_OF_VALIDITY` variable
 
 ``` shell
-make PASSWORD=bunnies DAYS_OF_VALIDITY=365
+make DAYS_OF_VALIDITY=365
 ```
 
 ### Generating Expired Certificates
@@ -173,7 +176,7 @@ and peer verification failures. To do so, set the certificate validity in
 days to a negative value:
 
 ``` shell
-make PASSWORD=bunnies DAYS_OF_VALIDITY=-7
+make DAYS_OF_VALIDITY=-7
 ```
 
 ### Overriding Number of Private Key Bits
@@ -182,7 +185,7 @@ It is possible to override the number of private key bits
 with a `make` variable:
 
 ``` shell
-make PASSWORD=bunnies NUMBER_OF_PRIVATE_KEY_BITS=4096
+make NUMBER_OF_PRIVATE_KEY_BITS=4096
 ```
 
 ### Certificate Information

@@ -9,8 +9,8 @@ and two certificate/key pairs signed by it:
 ## Generating
 
 ```shell
-# pass a password using the PASSWORD env variable
-make PASSWORD=bunnies
+# pass a private key password using the PASSWORD variable if needed
+make
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -23,7 +23,7 @@ It possible to use [ECC](https://blog.cloudflare.com/a-relatively-easy-to-unders
 ```shell
 cd [path to tls-gen repository]/basic
 # pass a password using the PASSWORD variable
-make PASSWORD=bunnies USE_ECC=true ECC_CURVE="prime256v1"
+make USE_ECC=true ECC_CURVE="prime256v1"
 # results will be under the ./result directory
 ls -lha ./result
 ```
@@ -39,7 +39,7 @@ openssl ecparam -list_curves
 If you want to generate additional server certificates using the same Root CA, use:
 
 ```shell
-make CN=newname PASSWORD=bunnies gen-server
+make CN=newname gen-server
 ```
 
 ### Generate additional client certificate
@@ -47,7 +47,7 @@ make CN=newname PASSWORD=bunnies gen-server
 If you want to generate additional client certificates using the same Root CA, use:
 
 ```shell
-make CN=newname PASSWORD=bunnies gen-client
+make CN=newname gen-client
 ```
 
 ### Regeneration
@@ -55,7 +55,7 @@ make CN=newname PASSWORD=bunnies gen-client
 To regenerate, use
 
 ```shell
-make PASSWORD=bunnies regen
+make regen
 ```
 
 The `regen` target accepts the same variables as `gen` (default target) above.
