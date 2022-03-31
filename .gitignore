@@ -6,6 +6,7 @@ result/*
 *.pem
 *.old
 *.p12
+*.jks
 index.*
 serial
 basic/testca/openssl.cnf
