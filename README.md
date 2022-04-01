@@ -49,19 +49,22 @@ cd [path to tls-gen repository]/basic
 # pass a private key password using the PASSWORD variable if needed
 make
 
-## copy or move files to use hostname-neutral filenames,
+## copy or move files to use hostname-neutral filenames
+## such as client_certificate.pem and client_key.pem,
 ## this step is optional
-# cp result/client_$(hostname)_certificate.pem result/client_certificate.pem
-# cp result/client_$(hostname)_key.pem         result/client_key.pem
-# cp result/server_$(hostname)_certificate.pem result/server_certificate.pem
-# cp result/server_$(hostname)_key.pem         result/server_key.pem
+# make alias-leaf-artifacts
 
 # results will be under the ./result directory
 ls -lha ./result
 ```
 
 Generated CA certificate as well as client and server certificate and private keys will be
-under the `result` directory.
+under the `result` directory. Their names will include hostnames. To use
+"host-neutral" names such as `client_certificate.pem` and `client_key.pem`, use
+
+``` shell
+make alias-leaf-artifacts
+```
 
 It possible to use [ECC][ecc-intro] for leaf keys:
 

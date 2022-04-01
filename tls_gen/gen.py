@@ -59,6 +59,14 @@ def copy_leaf_certificate_and_key_pair(peer):
     copy_tuple_path((peer, "key.pem"),     (result_dir_name, "{}_key.pem".format(peer)))
     copy_tuple_path((peer, "keycert.p12"), (result_dir_name, "{}_key.p12".format(peer)))
 
+def alias_file(kind, peer):
+    """
+    Copies a leaf certificate to commonly used file names (e.g. client_certificate.pem)
+    under the results directory
+    """
+    copy_tuple_path((result_dir_name, "{}_certificate.pem".format(peer)), (result_dir_name, "{}_certificate.pem".format(kind)))
+    copy_tuple_path((result_dir_name, "{}_key.pem".format(peer)),         (result_dir_name, "{}_key.pem".format(kind)))
+
 def openssl_req(opts, *args, **kwargs):
     cnf_path = get_openssl_cnf_path(opts)
     print("=>\t[openssl_req]")
