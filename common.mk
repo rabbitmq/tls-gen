@@ -5,7 +5,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2007-2014 VMware, Inc. or its affiliates. All rights reserved.
-# Copyright (c) 2014-2020 Michael Klishin and contributors.
+# Copyright (c) 2014-2022 Michael Klishin and contributors.
+# Copyright (c) 2022 VMware, Inc. or its affiliates. All rights reserved.
 
 OPENSSL = openssl
 
