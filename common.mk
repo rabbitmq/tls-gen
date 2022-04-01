@@ -91,5 +91,8 @@ info:
 verify:
 	$(PYTHON) profile.py verify --common-name $(CN)
 
+alias-leaf-artifacts:
+	$(PYTHON) profile.py alias-leaf-artifacts
+
 help:
 	$(PYTHON) profile.py --help

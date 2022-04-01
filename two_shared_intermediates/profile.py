@@ -81,13 +81,18 @@ def info(opts):
     info.leaf_certificate_info("client")
     info.leaf_certificate_info("server")
 
+def alias_leaf_artifacts(opts):
+    print("This command is not supported by this profile")
+
+
 commands = {"generate":   generate,
             "gen":        generate,
             "clean":      clean,
             "regenerate": regenerate,
             "regen":      regenerate,
             "verify":     verify,
-            "info":       info}
+            "info":       info,
+            "alias-leaf-artifacts": alias_leaf_artifacts}
 
 if __name__ == "__main__":
     sys.path.append("..")

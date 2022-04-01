@@ -25,7 +25,6 @@ def copy_tuple_path(from_tuple, to_tuple):
 
 def openssl_cnf_path():
     return relative_path("openssl.cnf")
-
 #
 # Root CA
 #

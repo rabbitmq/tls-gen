@@ -80,12 +80,26 @@ def verify_pkcs12(opts):
 
 def info(opts):
     cn = opts.common_name
-    name = 'client_{}'.format(cn)
-    info.leaf_certificate_info(name)
+    client_name = 'client_{}'.format(cn)
+    info.leaf_certificate_info(client_name)
 
+    server_name = 'server_{}'.format(cn)
+    info.leaf_certificate_info(server_name)
+
+def alias_leaf_artifacts(opts):
     cn = opts.common_name
-    name = 'server_{}'.format(cn)
-    info.leaf_certificate_info(name)
+    client_name = 'client_{}'.format(cn)
+    server_name = 'server_{}'.format(cn)
+
+    print("Will copy certificate and key for {} to {}".format(client_name, paths.relative_path(*("result", "client_*.pem"))))
+    print("Will copy certificate and key for {} to {}".format(server_name, paths.relative_path(*("result", "server_*.pem"))))
+
+    gen.alias_file("client", client_name)
+    gen.alias_file("server", client_name)
+
+    print("Done! Find new copies under ./result!")
+
+
 
 commands = {"generate":        generate,
             "gen":             generate,
@@ -96,7 +110,8 @@ commands = {"generate":        generate,
             "regen":           regenerate,
             "verify":          verify,
             "verify-pkcs12":   verify_pkcs12,
-            "info":            info}
+            "info":            info,
+            "alias-leaf-artifacts": alias_leaf_artifacts}
 
 if __name__ == "__main__":
     sys.path.append("..")
