@@ -1,7 +1,7 @@
-testca/*
-server/*
-client/*
-result/*
+testca/
+server/
+client/
+result/
 *.cer
 *.pem
 *.old

@@ -48,26 +48,26 @@ x509_extensions    = root_ca_extensions
 commonName = hostname
 
 [ root_ca_extensions ]
-basicConstraints = CA:true
-keyUsage         = keyCertSign, cRLSign
-subjectKeyIdentifier = hash
+basicConstraints       = critical,CA:true
+keyUsage               = keyCertSign, cRLSign
+subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer
-basicConstraints = critical,CA:true
-
 
 [ client_extensions ]
-basicConstraints = CA:false
-keyUsage         = digitalSignature,keyEncipherment
-extendedKeyUsage = clientAuth
-subjectAltName   = @client_alt_names
+basicConstraints       = CA:false
+keyUsage               = digitalSignature,keyEncipherment
+extendedKeyUsage       = clientAuth
+subjectAltName         = @client_alt_names
+crlDistributionPoints  = URI:http://localhost:8000/basic.crl
 
 [ server_extensions ]
-basicConstraints = CA:false
-keyUsage         = digitalSignature,keyEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName   = @server_alt_names
-subjectKeyIdentifier = hash
+basicConstraints       = CA:false
+keyUsage               = digitalSignature,keyEncipherment
+extendedKeyUsage       = serverAuth
+subjectAltName         = @server_alt_names
+subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid,issuer
+crlDistributionPoints  = URI:http://localhost:8000/basic.crl
 
 [ client_alt_names ]
 DNS.1 = $common_name

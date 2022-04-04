@@ -77,3 +77,24 @@ make info
 ```
 
 This assumes the certificates were previously generated.
+
+## CRL
+
+The Root CA creates certificates whose CRL distribution point is `http://localhost:8000/basic.crl`. To make this CRL available, Python 3 can be used:
+
+```
+cd result
+python -m http.server
+```
+
+If you need to test revoking a certificate do the following from the `basic` directory:
+
+```
+openssl ca -config openssl.cnf -revoke ./result/server_MY-CN_certificate.pem -keyfile ./testca/private/cakey.pem -cert ./testca/cacert.pem
+```
+
+Then regenerate the CRL file:
+
+```
+make gen-crl
+```
