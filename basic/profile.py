@@ -96,7 +96,7 @@ def alias_leaf_artifacts(opts):
     print("Will copy certificate and key for {} to {}".format(server_name, paths.relative_path(*("result", "server_*.pem"))))
 
     gen.alias_file("client", client_name)
-    gen.alias_file("server", client_name)
+    gen.alias_file("server", server_name)
 
     print("Done! Find new copies under ./result!")
 
