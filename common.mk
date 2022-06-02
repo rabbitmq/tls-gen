@@ -58,7 +58,7 @@ clean:
 
 gen:
 	$(PYTHON) profile.py generate --password $(PASS) \
-	--common-name $(CN) \
+	--common-name '$(CN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
@@ -66,31 +66,31 @@ gen:
 
 gen-client:
 	$(PYTHON) profile.py generate-client --password $(PASS) \
-	--common-name $(CN) \
+	--common-name '$(CN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
 gen-server:
 	$(PYTHON) profile.py generate-server --password $(PASS) \
-	--common-name $(CN) \
+	--common-name '$(CN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
 regen:
 	$(PYTHON) profile.py regenerate --password $(PASS) \
-	--common-name $(CN) \
+	--common-name '$(CN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
 info:
-	$(PYTHON) profile.py info --common-name $(CN)
+	$(PYTHON) profile.py info --common-name '$(CN)'
 
 verify:
-	$(PYTHON) profile.py verify --common-name $(CN)
+	$(PYTHON) profile.py verify --common-name '$(CN)'
 
 alias-leaf-artifacts:
 	$(PYTHON) profile.py alias-leaf-artifacts
