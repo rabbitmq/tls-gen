@@ -74,7 +74,7 @@ gen-client:
 gen-server:
 	$(PYTHON) profile.py generate-server --password $(PASS) \
 	--common-name '$(CN)' \
-	--client-alt-name $(CLIENT_ALT_NAME) \
+	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
 
