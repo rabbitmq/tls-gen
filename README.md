@@ -11,7 +11,7 @@ The project is originally extracted from a number of [RabbitMQ](https://rabbitmq
 `tls-gen` generates a self-signed Certificate Authority (CA) certificate
 and two or more pairs of keys: client and server, all with a single command.
 
-It supports more than one profile that generate certificate chains of different length and "shape".
+It supports more than one profile that generates certificate chains of different length and "shape".
 
 Private keys can be generated using RSA as well as [ECC][ecc-intro].
 
@@ -66,7 +66,7 @@ under the `result` directory. Their names will include hostnames. To use
 make alias-leaf-artifacts
 ```
 
-It possible to use [ECC][ecc-intro] for leaf keys:
+It is possible to use [ECC][ecc-intro] for leaf keys:
 
 ``` shell
 cd [path to tls-gen repository]/basic
@@ -94,7 +94,7 @@ make
 ls -lha ./result
 ```
 
-It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
+It is possible to use [ECC][ecc-intro] for intermediate and leaf keys:
 
 ``` shell
 make USE_ECC=true ECC_CURVE="prime256v1"
@@ -120,7 +120,7 @@ make
 ls -lha ./result
 ```
 
-It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
+It is possible to use [ECC][ecc-intro] for intermediate and leaf keys:
 
 ``` shell
 make USE_ECC=true ECC_CURVE="prime256v1"
