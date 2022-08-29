@@ -93,7 +93,7 @@ verify:
 	$(PYTHON) profile.py verify --common-name '$(CN)'
 
 alias-leaf-artifacts:
-	$(PYTHON) profile.py alias-leaf-artifacts
+	$(PYTHON) profile.py alias-leaf-artifacts --common-name '$(CN)'
 
 help:
 	$(PYTHON) profile.py --help
