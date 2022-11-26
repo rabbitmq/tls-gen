@@ -58,7 +58,7 @@ basicConstraints       = CA:false
 keyUsage               = digitalSignature,keyEncipherment
 extendedKeyUsage       = clientAuth
 subjectAltName         = @client_alt_names
-crlDistributionPoints  = URI:http://localhost:8000/basic.crl
+crlDistributionPoints  = URI:http://crl-server:8000/basic.crl
 
 [ server_extensions ]
 basicConstraints       = CA:false
@@ -67,7 +67,7 @@ extendedKeyUsage       = serverAuth
 subjectAltName         = @server_alt_names
 subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid,issuer
-crlDistributionPoints  = URI:http://localhost:8000/basic.crl
+crlDistributionPoints  = URI:http://crl-server:8000/basic.crl
 
 [ client_alt_names ]
 DNS.1 = $common_name

@@ -80,7 +80,7 @@ This assumes the certificates were previously generated.
 
 ## CRL
 
-The Root CA creates certificates whose CRL distribution point is `http://localhost:8000/basic.crl`. To make this CRL available, Python 3 can be used:
+The Root CA creates certificates whose CRL distribution point is `http://crl-server:8000/basic.crl`. To make this CRL available, Python 3 can be used, after ensuring that the DNS name `crl-server` resolves:
 
 ```
 cd result
