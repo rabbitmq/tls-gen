@@ -6,15 +6,14 @@
 # Copyright (c) 2014-2020 Michael Klishin and contributors.
 # Copyright (c) 2022 VMware, Inc. or its affiliates. All rights reserved.
 
-import os
 from subprocess import call
-import shutil
 
-from .paths import *
+import tls_gen.paths as p
+
 
 def leaf_certificate_info(peer):
     print("Will display {} certificate info\n\n".format(peer))
     call(["openssl", "x509",
-          "-in", result_leaf_certificate_path(peer),
+          "-in", p.result_leaf_certificate_path(peer),
           "-text",
           "-noout"])

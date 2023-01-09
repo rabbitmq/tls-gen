@@ -1,0 +1,100 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: tls-gen
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install flake8 pytest
+      - name: Lint with flake8
+        run: |
+          # The GitHub editor is 127 chars wide
+          flake8 . --verbose --count --show-source --statistics --max-complexity=10 --max-line-length=127
+      - name: Run
+        run: |
+          make -C basic
+          make -C basic info
+          make -C basic verify
+          make -C basic clean
+          make -C separate_intermediates
+          make -C separate_intermediates info
+          make -C separate_intermediates verify
+          make -C separate_intermediates clean
+          make -C two_shared_intermediates
+          make -C two_shared_intermediates info
+          make -C two_shared_intermediates verify
+          make -C two_shared_intermediates clean
+      - name: Test
+        run: ./test/basic.sh
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run
+        run: |
+          make -C basic
+          make -C basic info
+          make -C basic verify
+          make -C basic clean
+          make -C separate_intermediates
+          make -C separate_intermediates info
+          make -C separate_intermediates verify
+          make -C separate_intermediates clean
+          make -C two_shared_intermediates
+          make -C two_shared_intermediates info
+          make -C two_shared_intermediates verify
+          make -C two_shared_intermediates clean
+  build-osx:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run
+        run: |
+          make -C basic
+          make -C basic info
+          make -C basic verify
+          make -C basic clean
+          make -C separate_intermediates
+          make -C separate_intermediates info
+          make -C separate_intermediates verify
+          make -C separate_intermediates clean
+          make -C two_shared_intermediates
+          make -C two_shared_intermediates info
+          make -C two_shared_intermediates verify
+          make -C two_shared_intermediates clean
