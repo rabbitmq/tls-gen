@@ -54,7 +54,7 @@ endif
 all: regen verify
 
 clean:
-	$(PYTHON) profile.py clean
+	$(PYTHON) profile.py clean --common-name '$(CN)'
 
 gen:
 	$(PYTHON) profile.py generate --password $(PASS) \
