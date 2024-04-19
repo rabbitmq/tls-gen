@@ -117,12 +117,12 @@ def prepare_ca_directory(dir_name):
 
     serial = open(p.relative_path(dir_name, "serial"), "w")
     serial.write("01")
-    serial.close
+    serial.close()
 
     index_txt = open(p.relative_path(dir_name, "index.txt"), "w")
-    index_txt.close
+    index_txt.close()
     index_txt = open(p.relative_path(dir_name, "index.txt.attr"), "w")
-    index_txt.close
+    index_txt.close()
 
 #
 # Root CA
