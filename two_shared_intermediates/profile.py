@@ -30,7 +30,7 @@ def _concat_certificates():
           p.intermediate_ca_certificate_path("1"),
           p.root_ca_certificate_path()],
          stdout=chain_file)
-    chain_file.close
+    chain_file.close()
 
 
 def generate(opts):
