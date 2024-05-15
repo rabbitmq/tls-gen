@@ -6,6 +6,7 @@
 common_name = @COMMON_NAME@
 client_alt_name = @CLIENT_ALT_NAME@
 server_alt_name = @SERVER_ALT_NAME@
+domain_name = @DOMAIN_NAME@
 
 [ ca ]
 default_ca = test_root_ca
@@ -57,7 +58,7 @@ authorityKeyIdentifier = keyid:always,issuer
 [ ca_extensions ]
 basicConstraints = critical,CA:true,pathlen:0
 keyUsage         = keyCertSign, cRLSign
-# nameConstraints  = critical,@name_constraints
+nameConstraints  = critical,@name_constraints
 
 [ client_extensions ]
 basicConstraints = CA:false
@@ -89,6 +90,6 @@ DNS.2 = $server_alt_name
 DNS.3 = localhost
 
 [ name_constraints ]
-permitted;DNS.1 = .your.domain.name
+permitted;DNS.1 = $domain_name
 permitted;DNS.2 = $server_alt_name
 permitted;DNS.3 = localhost

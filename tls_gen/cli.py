@@ -18,6 +18,8 @@ def build_parser():
                  help="Private key password", default="")
     p.add_option("-n", "--common-name", dest="common_name", action="store",
                  help="Certificate CN (Common Name)", default=socket.gethostname())
+    p.add_option("-d", "--domain-name", dest="domain_name", action="store",
+                 help="Domain name when using nameConstraints extension", default='.local')
     p.add_option("--client-alt-name", dest="client_alt_name", action="store",
                  help="SAN (subject Alternative Name) for the client", default=socket.gethostname())
     p.add_option("--server-alt-name", dest="server_alt_name", action="store",

@@ -35,6 +35,7 @@ def get_openssl_cnf_path(opts):
     cn = opts.common_name
     client_alt_name = opts.client_alt_name or opts.common_name
     server_alt_name = opts.server_alt_name or opts.common_name
+    domain_name = opts.domain_name
     cnf_path = p.openssl_cnf_path()
     tmp_cnf_path = None
 
@@ -44,7 +45,8 @@ def get_openssl_cnf_path(opts):
             out_cnf0 = in_cnf.replace('@COMMON_NAME@', cn)
             out_cnf1 = out_cnf0.replace('@CLIENT_ALT_NAME@', client_alt_name)
             out_cnf2 = out_cnf1.replace('@SERVER_ALT_NAME@', server_alt_name)
-            outfile.write(out_cnf2)
+            out_cnf3 = out_cnf2.replace('@DOMAIN_NAME@', domain_name)
+            outfile.write(out_cnf3)
             tmp_cnf_path = outfile.name
 
     generated_cnf_file = tmp_cnf_path

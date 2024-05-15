@@ -18,6 +18,10 @@ ifndef CN
 CN := $(shell hostname)
 endif
 
+ifndef DOMAIN
+DOMAIN := .local
+endif
+
 ifndef CLIENT_ALT_NAME
 CLIENT_ALT_NAME := $(shell hostname)
 endif
@@ -59,6 +63,7 @@ clean:
 gen:
 	$(PYTHON) profile.py generate --password $(PASS) \
 	--common-name '$(CN)' \
+	--domain-name '$(DOMAIN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
@@ -67,6 +72,7 @@ gen:
 gen-client:
 	$(PYTHON) profile.py generate-client --password $(PASS) \
 	--common-name '$(CN)' \
+	--domain-name '$(DOMAIN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
@@ -74,6 +80,7 @@ gen-client:
 gen-server:
 	$(PYTHON) profile.py generate-server --password $(PASS) \
 	--common-name '$(CN)' \
+	--domain-name '$(DOMAIN)' \
 	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
 	--key-bits $(NUMBER_OF_PRIVATE_KEY_BITS) $(ECC_FLAGS)
@@ -81,6 +88,7 @@ gen-server:
 regen:
 	$(PYTHON) profile.py regenerate --password $(PASS) \
 	--common-name '$(CN)' \
+	--domain-name '$(DOMAIN)' \
 	--client-alt-name $(CLIENT_ALT_NAME) \
 	--server-alt-name $(SERVER_ALT_NAME) \
 	--days-of-validity $(DAYS_OF_VALIDITY) \
