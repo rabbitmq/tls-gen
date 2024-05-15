@@ -138,7 +138,7 @@ def generate_root_ca(opts):
             "-keyout",  p.root_ca_key_path(),
             "-out",     p.root_ca_certificate_path(),
             "-outform", "PEM",
-            "-subj",    "/CN=TLSGenSelfSignedtRootCA {}/L=$$$$/".format(iso_date)]
+            "-subj",    "/CN=TLSGenSelfSignedRootCA {}/L=$$$$/".format(iso_date)]
     if len(opts.password) > 0:
         args.append("-passout")
         args.append("pass:{}".format(opts.password))
