@@ -1,2 +1,1 @@
-root_ca/openssl.cnf
-intermediate_*_ca
+intermediate_*/
