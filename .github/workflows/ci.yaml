@@ -10,16 +10,26 @@ on:
     branches: [ main ]
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-test:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
+      - name: Link OpenSSL@3
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew link --force openssl@3
+          echo 'PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"' >> $GITHUB_ENV
+      - name: Show OpenSSL
+        run: |
+          openssl version
+          openssl version -d
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -36,6 +46,10 @@ jobs:
           make -C basic info
           make -C basic verify
           make -C basic clean
+          make -C one_intermediate
+          make -C one_intermediate info
+          make -C one_intermediate verify
+          make -C one_intermediate clean
           make -C separate_intermediates
           make -C separate_intermediates info
           make -C separate_intermediates verify
@@ -45,56 +59,5 @@ jobs:
           make -C two_shared_intermediates verify
           make -C two_shared_intermediates clean
       - name: Test
-        run: ./test/basic.sh
-  build-windows:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Run
-        run: |
-          make -C basic
-          make -C basic info
-          make -C basic verify
-          make -C basic clean
-          make -C separate_intermediates
-          make -C separate_intermediates info
-          make -C separate_intermediates verify
-          make -C separate_intermediates clean
-          make -C two_shared_intermediates
-          make -C two_shared_intermediates info
-          make -C two_shared_intermediates verify
-          make -C two_shared_intermediates clean
-  build-osx:
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Run
-        run: |
-          make -C basic
-          make -C basic info
-          make -C basic verify
-          make -C basic clean
-          make -C separate_intermediates
-          make -C separate_intermediates info
-          make -C separate_intermediates verify
-          make -C separate_intermediates clean
-          make -C two_shared_intermediates
-          make -C two_shared_intermediates info
-          make -C two_shared_intermediates verify
-          make -C two_shared_intermediates clean
+        if: matrix.os == 'ubuntu-latest'
+        run: ${{ github.workspace }}/test/basic.sh
