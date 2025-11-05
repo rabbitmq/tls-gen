@@ -19,11 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
-      - name: Show OpenSSL@3 prefix
+      - name: Use Homebrew OpenSSL 3
         if: matrix.os == 'macos-latest'
         run: |
-          brew --prefix openssl@3
-          ls -l $(brew --prefix openssl@3)
+          readonly prefix="$(brew --prefix openssl@3)"
+          echo "[INFO] openssl@3 prefix: $prefix"
+          echo "$prefix/bin" >> "$GITHUB_PATH"
       - name: Show OpenSSL
         run: |
           openssl version
