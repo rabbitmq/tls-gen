@@ -18,6 +18,8 @@ def _copy_artifacts_to_results():
     g.copy_root_ca_certificate_and_key_pair()
     g.copy_leaf_certificate_and_key_pair("server")
     g.copy_leaf_certificate_and_key_pair("client")
+    g.copy_leaf_certificate_and_key_pair("server_direct")
+    g.copy_leaf_certificate_and_key_pair("client_direct")
 
 
 def _concat_certificates():
@@ -48,6 +50,18 @@ def generate(opts):
     g.generate_client_certificate_and_key_pair(opts,
                                                parent_certificate_path=p.intermediate_ca_certificate_path("1"),
                                                parent_key_path=p.intermediate_ca_key_path("1"))
+    print("Will generate server certificate/key pair signed directly by the root CA")
+    g.generate_leaf_certificate_and_key_pair('server_direct', opts,
+                                             peer_path='server_direct',
+                                             parent_certificate_path=p.root_ca_certificate_path(),
+                                             parent_key_path=p.root_ca_key_path(),
+                                             parent_certs_path=p.root_ca_certs_path())
+    print("Will generate client certificate/key pair signed directly by the root CA")
+    g.generate_leaf_certificate_and_key_pair('client_direct', opts,
+                                             peer_path='client_direct',
+                                             parent_certificate_path=p.root_ca_certificate_path(),
+                                             parent_key_path=p.root_ca_key_path(),
+                                             parent_certs_path=p.root_ca_certs_path())
     _copy_artifacts_to_results()
     _concat_certificates()
     print("Done! Find generated certificates and private keys under ./result!")
@@ -58,7 +72,9 @@ def clean(opts):
               p.intermediate_ca_path("1"),
               p.result_path(),
               p.leaf_pair_path("server"),
-              p.leaf_pair_path("client")]:
+              p.leaf_pair_path("client"),
+              p.leaf_pair_path("server_direct"),
+              p.leaf_pair_path("client_direct")]:
         print("Removing {}".format(s))
         try:
             shutil.rmtree(s)
@@ -75,11 +91,16 @@ def verify(opts):
     print("Will verify generated certificates against the CA certificate chain...")
     v.verify_leaf_certificate_against_ca_chain("client")
     v.verify_leaf_certificate_against_ca_chain("server")
+    print("Will verify direct certificates against the root CA...")
+    v.verify_leaf_certificate_against_root_ca("client_direct")
+    v.verify_leaf_certificate_against_root_ca("server_direct")
 
 
 def info(opts):
     i.leaf_certificate_info("client")
     i.leaf_certificate_info("server")
+    i.leaf_certificate_info("client_direct")
+    i.leaf_certificate_info("server_direct")
 
 
 def alias_leaf_artifacts(opts):

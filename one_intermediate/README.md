@@ -1,10 +1,29 @@
 # Chained (With One Intermediate) Certificates
 
-This tls-gen variation generates a root CA, one intermediary CA and two
-certificate/key pairs signed by the intermediate CA:
+This tls-gen variation generates a root CA, one intermediary CA and four
+certificate/key pairs:
 
  * Chain 1: root CA => intermediate 1 => client certificate/key pair
  * Chain 2: root CA => intermediate 1 => server certificate/key pair
+ * Chain 3: root CA => client_direct certificate/key pair (no intermediate)
+ * Chain 4: root CA => server_direct certificate/key pair (no intermediate)
+
+## Certificate Chain Structure
+
+```
+Root CA
+    │
+    ├─→ Intermediate CA
+    │       │
+    │       ├─→ server_certificate.pem
+    │       └─→ client_certificate.pem
+    │
+    ├─→ server_direct_certificate.pem
+    └─→ client_direct_certificate.pem
+```
+
+All certificates share the same root CA, allowing you to test both intermediate
+and direct certificate chains with a single trusted root.
 
 ## Generating
 
@@ -15,10 +34,10 @@ make
 ls -lha ./result
 ```
 
-Generated CA certificate as well as client and server certificate and private keys will be
-under the `result` directory.
+Generated CA certificates as well as four certificate/key pairs (server, client,
+server_direct, and client_direct) will be under the `result` directory.
 
-It possible to use [ECC][ecc-intro] for intermediate and leaf keys:
+It is possible to use [ECC][ecc-intro] for intermediate and leaf keys:
 
 ```
 # pass a private key password using the PASSWORD variable if needed
@@ -46,15 +65,19 @@ The `regen` target accepts the same variables as `gen` (default target) above.
 
 ### Verification
 
-You can verify the generated client and server certificates against the generated CA one with
+You can verify the generated certificates against the CA chain with
 
 ``` shell
 make verify
 ```
 
+This verifies the intermediate-signed certificates (server and client) against
+the full CA chain. The direct certificates (server_direct and client_direct)
+can be verified directly against the root CA.
+
 ## Certificate Information
 
-To display client and server certificate information, use
+To display certificate information for all generated certificates, use
 
 ``` shell
 make info
