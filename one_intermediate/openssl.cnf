@@ -73,6 +73,25 @@ subjectAltName   = @server_alt_names
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer
 
+# The following sections are duplicates of the above, required because
+# OpenSSL's ca command looks for extensions named {peer}_extensions.
+# When generating certificates with peer names 'server_direct' and 'client_direct',
+# OpenSSL expects to find 'server_direct_extensions' and 'client_direct_extensions'.
+
+[ server_direct_extensions ]
+basicConstraints = CA:false
+keyUsage         = digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName   = @server_alt_names
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+
+[ client_direct_extensions ]
+basicConstraints = CA:false
+keyUsage         = digitalSignature,keyEncipherment
+extendedKeyUsage = clientAuth
+subjectAltName   = @client_alt_names
+
 [ client_alt_names ]
 DNS.1 = $common_name
 DNS.2 = $client_alt_name
