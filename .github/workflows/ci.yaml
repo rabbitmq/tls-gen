@@ -19,6 +19,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
+      - name: Show OpenSSL@3 prefix
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew --prefix openssl@3
+          ls -l $(brew --prefix openssl@3)
       - name: Show OpenSSL
         run: |
           openssl version
