@@ -19,11 +19,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
-      - name: Link OpenSSL@3
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew link --force openssl@3
-          echo 'PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"' >> $GITHUB_ENV
       - name: Show OpenSSL
         run: |
           openssl version
